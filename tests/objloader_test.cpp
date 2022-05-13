@@ -10,6 +10,18 @@ int main() {
     std::vector<TriangleCell> faces;
     std::vector<Point<glm::vec3>> normals;
 
-    ObjLoader::loadObj(obj_path, &points, &pointIds, &faces, &normals);
+    ObjLoader::loadObj(obj_path, points, pointIds, faces, normals);
+
+    for (int i = 0; i < points.size(); i++) {
+        std::cout << "point: (" << 
+            points[i].getPosition().x << ", " <<
+            points[i].getPosition().y << ", " <<
+            points[i].getPosition().z << ")\n";
+        
+    }
+    std::cout << "pointIds.size(): " << pointIds.size() << "\n";
+
+    std::cout << "[ObjLoader]::loadModel: points loaded correctly\n";
+
     return 0;
 }
