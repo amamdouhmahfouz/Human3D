@@ -1,3 +1,6 @@
+#ifndef POINT_H
+#define POINT_H
+
 #include <glm/glm.hpp>
 
 template<class T>
@@ -10,3 +13,5 @@ public:
     T getPosition() const;
     unsigned int getIndex() const;
 };
+
+#endif // POINT_H

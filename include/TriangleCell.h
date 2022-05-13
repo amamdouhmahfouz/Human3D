@@ -1,3 +1,6 @@
+#ifndef TRIANGLECELL_H
+#define TRIANGLECELL_H
+
 class TriangleCell {
 public:
     unsigned int indexVertex1;
@@ -12,3 +15,5 @@ public:
                  unsigned int n1, unsigned int index) : indexVertex1(v1), indexVertex2(v2), 
                     indexVertex3(v3), indexNormal(n1), triangleIndex(index) {}
 };
+
+#endif // TRIANGLECELL_H
