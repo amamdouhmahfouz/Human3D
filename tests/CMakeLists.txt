@@ -103,14 +103,14 @@ target_link_libraries(drawTriangle_test
     PRIVATE libglew_static 
 )
 
-add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${THIRD_PARTY_SOURCES})
+add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${DIR_ONE_ABOVE}/src/Point.cpp ${THIRD_PARTY_SOURCES})
 target_link_libraries(mesh_test glfw)
 
-add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${THIRD_PARTY_SOURCES})
+add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 target_link_libraries(model_test glfw assimp)
 
-add_executable(buildSSM_test buildSSM_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(buildSSM_test glfw assimp)
+add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+target_link_libraries(buildSSM_test glfw)
 
 add_executable(strings_test strings_test.cpp)
 
