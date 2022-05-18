@@ -6,9 +6,9 @@
 template<class T>
 class Point {
 private: 
+public:
     T position;
     unsigned int index;
-public:
     Point(T vec, unsigned int index);
     T getPosition() const;
     unsigned int getIndex() const;

@@ -7,6 +7,8 @@
 #include <filesystem>
 #include <glm/glm.hpp>
 #include "Model.h"
+#include "DeformationField.h"
+#include "Alignment.h"
 
 class BuildSSM {
 private:
@@ -14,11 +16,9 @@ private:
     std::vector<std::string> metadata_files;
     std::vector<std::string> meshes_files;
 
-    std::vector<Model> models;
     Model* referenceModel;
     std::vector<Model> restOfModels; // does not include the referenceMesh
 
-    std::vector<std::vector<glm::vec3> > deformationFields;
 
     float averageHeight;
     float averageWeight;
@@ -27,6 +27,9 @@ private:
     std::string getCorrespondingMetadataFile(const std::string& mesh_file_path);
     std::string getNameFromFile(const std::string& filepath, const std::string& file_extension);
 public:
+    std::vector<Model> models;
+    // std::vector<std::vector<glm::vec3> > deformationFields;
+    std::vector<std::vector<DeformationField> > deformationFields;
     void createModelsFromFiles();
     // directory contains: 01.obj, 01.json, 02.obj, 02.json, ...
     BuildSSM(const std::string& dir_path);
@@ -35,6 +38,10 @@ public:
     // average height and weight
     void createStatsFromMetadata();
     void createDeformationFields();
+    
+    Model createMeanModel();
+    void computeGPA(Model meanModel);
+
 };
 
 

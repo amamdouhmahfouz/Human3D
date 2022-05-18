@@ -4,6 +4,15 @@ Model::Model(const std::string &filename) {
     loadModel(filename);
 }
 
+Model::Model(Mesh mesh) {
+    this->mesh = mesh;
+}
+
+Model::Model(Mesh mesh, float weight, float height) {
+    this->mesh = mesh;
+    this->weight = weight;
+    this->height = height;
+}
 
 void Model::loadModel(const std::string& filename) {
     ObjLoader::loadObj(filename, mesh.points, mesh.pointIds, mesh.triangleCells, mesh.normals);
@@ -49,4 +58,13 @@ float Model::getWeight() const {
 
 std::string Model::getName() const {
     return this->name;
+}
+
+glm::vec3 Model::getCenterOfMass() const {
+    return mesh.getCenterOfMass();
+}
+
+void Model::setMetadata(float height, float weight) {
+    this->height = height;
+    this->weight = weight;
 }

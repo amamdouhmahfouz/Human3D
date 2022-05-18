@@ -9,7 +9,7 @@ void ObjLoader::loadObj(std::string obj_path, std::vector<Point<glm::vec3>>& _po
         std::cout << "[ObjLoader::loadModel] cannot load obj file\n";
         return;
     }
-    
+    //std::cout << "obj_path" << obj_path << "\n";
     char buffer[256];
     while (!file_in.eof()) {
         file_in.getline(buffer, 256);
@@ -25,7 +25,7 @@ void ObjLoader::loadObj(std::string obj_path, std::vector<Point<glm::vec3>>& _po
         } else if (_positions[i]->c_str()[0] == 'v' && _positions[i]->c_str()[1] == ' ') {
             glm::vec3 pos;
             sscanf(_positions[i]->c_str(), "v %f %f %f", &pos.x, &pos.y, &pos.z);
-            std::cout << "pos.x: " << pos.x << "\n";
+            //std::cout << "pos.x: " << pos.x << "\n";
             _points.push_back(Point(pos, vertexIndex));
             pointIds.push_back(vertexIndex);
             vertexIndex += 1;

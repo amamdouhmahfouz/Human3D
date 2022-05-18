@@ -22,16 +22,19 @@ public:
     Mesh mesh;
 
     Model(const std::string &filename);
-    Model(Mesh* mesh);
+    Model(Mesh mesh);
+    Model(Mesh mesh, float weight, float height);
     ~Model();
 
     void loadModel(std::string const &filename);
     void setMetadata(const std::string& filename);
+    void setMetadata(float height, float weight);
 
     float getHeight() const;
     float getWeight() const;
     std::string getGender() const;
     std::string getName() const;
+    glm::vec3 getCenterOfMass() const;
 };
 
 
