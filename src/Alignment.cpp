@@ -4,17 +4,14 @@ void Alignment::RotationAlignment(Model &from, Model to) {
 
     glm::vec3 fromVec = from.mesh.getPointAtIndex(0).position;
     glm::vec3 toVec = to.mesh.getPointAtIndex(0).position;
-    //std::cout << "fromVec: (" << fromVec.x << ", " << fromVec.y << ", " << fromVec.z << ")\n";
-    //std::cout << "toVec: (" << toVec.x << ", " << toVec.y << ", " << toVec.z << ")\n";
+
     glm::vec3 v = glm::cross(toVec, fromVec);
     if (v.x == 0.0 && v.y == 0.0 && v.z == 0.0) 
         return;
 
-    //std::cout << "v: (" << v.x << ", " << v.y << ", " << v.z << ")\n";
     // source: stackoverflow
     float angle = acos(glm::dot(toVec, fromVec) / (glm::length(toVec) * glm::length(fromVec)));
-    //std::cout << "angle(degrees): " << glm::degrees(angle) << "\n";
-    //std::cout << "angle(radians): " << angle << "\n";
+
     glm::mat4 rotmat = glm::rotate(angle, v);
 
     // special cases lead to NaN values in the rotation matrix
@@ -32,17 +29,14 @@ void Alignment::RotationAlignment(Model &from, Model to) {
         }
     }
 
-    // std::cout << "\nrotmat:\n";
-    // for (int i = 0; i < 4; i++) {
-    //     for (int j = 0; j < 4; j++) {
-    //         std::cout << rotmat[i][j] << " ";
-    //     }
-    //     std::cout << "\n";
-    // }
-
-    // rotate all the points in the "to" mesh by the calculated rotation matrix
+    // rotate all the points in the "from" mesh by the calculated rotation matrix
     for (int i = 0; i < from.mesh.points.size(); i++) {
-        from.mesh.points[i].position = rotmat * glm::vec4(from.mesh.points[i].position, 1.0f);
+        from.mesh.points[i].position = rotmat * glm::vec4(from.mesh.points[i].position, 1.0f);        
+    }
+
+    // rotate all normals in "from" mesh
+    for (int i = 0; i < from.mesh.normals.size(); i++) {
+        from.mesh.normals[i].position = rotmat * glm::vec4(from.mesh.normals[i].position, 1.0f);
     }
 
 }
