@@ -131,7 +131,9 @@ Model BuildSSM::createMeanModel() {
     return meanModel;
 }
 
-void BuildSSM::computeGPA(Model meanModel) {
+void BuildSSM::computeGPA() {
+
+    float error = 0.0;
 
     // 1. deTranslate all models
     // 2. deScale all models
@@ -140,21 +142,22 @@ void BuildSSM::computeGPA(Model meanModel) {
         models[i].mesh.deScale();
     }
     // 3. choose arbitray reference model
-    Model referenceMeanModel = models[0];
-    // 4. align all models to the reference model
-    for (int i = 0; i < models.size(); i++) {
-        Alignment::RotationAlignment(models[i],referenceMeanModel);
+    Model ref = models[0];
+
+    for (int k = 0; k < models.size(); k++) {
+        // 4. align all models to the reference model
+        for (int i = 0; i < models.size(); i++) {
+            Alignment::RotationAlignment(models[i], ref); // aligns models[i] in-place(pass by reference)
+        }
+        // 5. compute mean shape of ALL the aligned+reference shapes
+        Model referenceMeanModel = createMeanModel();
+        // 6. calculate procrustes distance between mean shape and referece
+        error = Alignment::procrustesDistance(ref, referenceMeanModel);
+        // 7. procrustes distance is above a certain threshold, set 
+        std::cout << "error: " << error << "\n";
+        // 8. the reference to mean shape and go to step 4
+        ref = referenceMeanModel;
     }
-
-    // 5. compute mean shape of ALL the aligned+reference shapes
-    // 6. calculate procrustes distance between mean shape and referece
-    // 7. if the procrustes distance is above a certain threshold, set 
-    //    the reference to mean shape and go to step 4
-
-    // 1. get reference mean model
-    referenceMeanModel = createMeanModel();
-    // 2. allign all models to the reference mean model
-    // 3. calculate procrustes distance
-    // 4. loop again if error is greater than a threshold
+ 
 
 }

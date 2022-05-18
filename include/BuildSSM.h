@@ -40,7 +40,7 @@ public:
     void createDeformationFields();
     
     Model createMeanModel();
-    void computeGPA(Model meanModel);
+    void computeGPA();
 
 };
 

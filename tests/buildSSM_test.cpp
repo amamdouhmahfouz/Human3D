@@ -119,6 +119,7 @@ int main() {
     glm::vec3 aa  = rotmat * glm::vec4(from, 1.0f);
     std::cout << "aa.position: (" << aa.x << ", " << aa.y << ", " << aa.z << ")\n"; 
     
+    ssm.computeGPA();
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);
