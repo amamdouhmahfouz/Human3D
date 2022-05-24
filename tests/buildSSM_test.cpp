@@ -120,6 +120,12 @@ int main() {
     std::cout << "aa.position: (" << aa.x << ", " << aa.y << ", " << aa.z << ")\n"; 
     
     ssm.computeGPA();
+
+    // test saving a mesh after computing generalized procrustes alignment
+    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTest1.obj",
+     ssm.models[5].mesh.points, ssm.models[5].mesh.pointIds, ssm.models[5].mesh.triangleCells,
+     ssm.models[5].mesh.normals, ssm.models[5].mesh.textureCoords);
+    
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);
