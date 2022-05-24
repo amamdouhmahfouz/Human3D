@@ -15,7 +15,7 @@ Model::Model(Mesh mesh, float weight, float height) {
 }
 
 void Model::loadModel(const std::string& filename) {
-    ObjLoader::loadObj(filename, mesh.points, mesh.pointIds, mesh.triangleCells, mesh.normals);
+    ObjLoader::loadObj(filename, mesh.points, mesh.pointIds, mesh.triangleCells, mesh.normals, mesh.textureCoords);
 }
 
 Model::~Model() {

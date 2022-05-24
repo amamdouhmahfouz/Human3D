@@ -20,6 +20,7 @@ public:
     std::vector<unsigned int> pointIds;
     std::vector<TriangleCell> triangleCells;
     std::vector<Point<glm::vec3>> normals;
+    std::vector<Point<glm::vec2>> textureCoords;
 
     Mesh();
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);

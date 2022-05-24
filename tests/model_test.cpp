@@ -32,5 +32,8 @@ int main() {
     std::cout << "[Model] model.mesh.points.size(): " << model.mesh.pointIds.size() << "\n";
     printMesh(model.mesh);
 
+    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/cubeNew.obj",
+        model.mesh.points, model.mesh.pointIds, model.mesh.triangleCells, model.mesh.normals, model.mesh.textureCoords);
+
     return 0;
 }

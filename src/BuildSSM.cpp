@@ -159,5 +159,7 @@ void BuildSSM::computeGPA() {
         ref = referenceMeanModel;
     }
  
+    // update the actual reference model
+    this->referenceModel = &ref;
 
 }

@@ -9,8 +9,9 @@ int main() {
     std::vector<unsigned int> pointIds; 
     std::vector<TriangleCell> faces;
     std::vector<Point<glm::vec3>> normals;
+    std::vector<Point<glm::vec2>> texCoords;
 
-    ObjLoader::loadObj(obj_path, points, pointIds, faces, normals);
+    ObjLoader::loadObj(obj_path, points, pointIds, faces, normals, texCoords);
 
     for (int i = 0; i < points.size(); i++) {
         std::cout << "point: (" << 

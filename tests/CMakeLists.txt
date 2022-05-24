@@ -118,3 +118,5 @@ add_executable(point_test point_test.cpp  ${DIR_ONE_ABOVE}/src/Point.cpp)
 
 add_executable(objloader_test objloader_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 target_link_libraries(objloader_test glfw assimp)
+
+add_executable(fileWrite_test fileWrite_test.cpp)
