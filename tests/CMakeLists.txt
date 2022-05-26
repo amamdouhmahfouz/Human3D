@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 find_package( OpenCV REQUIRED )
 
+find_package (Eigen3 3.3 REQUIRED)
+
 get_filename_component(DIR_ONE_ABOVE ../ ABSOLUTE)
 
 set(ENABLE_ASSIMP   ON CACHE BOOL "Add Open Asset Import Library (assimp) to the project" FORCE)
@@ -104,19 +106,22 @@ target_link_libraries(drawTriangle_test
 )
 
 add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${DIR_ONE_ABOVE}/src/Point.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(mesh_test glfw)
+target_link_libraries(mesh_test glfw Eigen3::Eigen)
 
 add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(model_test glfw assimp)
+target_link_libraries(model_test glfw assimp Eigen3::Eigen)
 
 add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(buildSSM_test glfw)
+target_link_libraries(buildSSM_test glfw Eigen3::Eigen)
 
 add_executable(strings_test strings_test.cpp)
 
 add_executable(point_test point_test.cpp  ${DIR_ONE_ABOVE}/src/Point.cpp)
 
 add_executable(objloader_test objloader_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(objloader_test glfw assimp)
+target_link_libraries(objloader_test glfw assimp Eigen3::Eigen)
 
 add_executable(fileWrite_test fileWrite_test.cpp)
+
+add_executable(matrix_test matrix_test.cpp ${THIRD_PARTY_SOURCES})
+target_link_libraries(matrix_test glfw Eigen3::Eigen)
