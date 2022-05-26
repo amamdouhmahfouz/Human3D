@@ -126,6 +126,9 @@ int main() {
      ssm.models[5].mesh.points, ssm.models[5].mesh.pointIds, ssm.models[5].mesh.triangleCells,
      ssm.models[5].mesh.normals, ssm.models[5].mesh.textureCoords);
     
+
+    ssm.createPCA();
+
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);

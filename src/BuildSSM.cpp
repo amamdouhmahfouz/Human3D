@@ -163,3 +163,12 @@ void BuildSSM::computeGPA() {
     this->referenceModel = &ref;
 
 }
+
+void BuildSSM::buildCovarianceMatrix() {
+    
+}
+
+void BuildSSM::createPCA() {
+    pcaModel = new PCA(models);
+    pcaModel->computeEig();
+}

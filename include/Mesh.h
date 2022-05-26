@@ -35,6 +35,7 @@ public:
     float getScale() const;
     void deTranslate(); // makes the mean point of the mesh zeros
     void deScale(); // makes the scale of the mesh = 1
+    void updateNormals();
 
     Point<glm::vec3> getPointAtIndex(unsigned int pointIndex);
 

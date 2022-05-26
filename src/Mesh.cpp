@@ -73,6 +73,10 @@ void Mesh::deScale() {
     }
 }
 
+// void Mesh::updateNormals() {
+//     for (int i = 0; i < normals.size(); )
+// }
+
 Point<glm::vec3> Mesh::getPointAtIndex(unsigned int pointIndex) {
     for (int i = 0; i < points.size(); i++) 
         if (points[i].index == pointIndex)

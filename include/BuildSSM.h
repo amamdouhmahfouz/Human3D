@@ -9,6 +9,9 @@
 #include "Model.h"
 #include "DeformationField.h"
 #include "Alignment.h"
+#include "PCA.h"
+
+
 
 class BuildSSM {
 private:
@@ -28,6 +31,8 @@ private:
     std::string getNameFromFile(const std::string& filepath, const std::string& file_extension);
 public:
     std::vector<Model> models;
+    PCA* pcaModel;
+
     // std::vector<std::vector<glm::vec3> > deformationFields;
     std::vector<std::vector<DeformationField> > deformationFields;
     void createModelsFromFiles();
@@ -41,6 +46,12 @@ public:
     
     Model createMeanModel();
     void computeGPA();
+    void buildCovarianceMatrix();
+
+    // subtracts the mean model out of all models
+    void deMeanModels();
+
+    void createPCA();
 
 };
 
