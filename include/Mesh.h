@@ -7,10 +7,11 @@
 #include "Point.h"
 #include "TriangleCell.h"
 //#include <glm/glm.hpp>
+#include <glm/gtx/normal.hpp>
 
 class Mesh {
 private:  
-
+    Point<glm::vec3> getPoint(unsigned int index);
 public:  
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -35,7 +36,9 @@ public:
     float getScale() const;
     void deTranslate(); // makes the mean point of the mesh zeros
     void deScale(); // makes the scale of the mesh = 1
+    void computeNormals();
     void updateNormals();
+
 
     Point<glm::vec3> getPointAtIndex(unsigned int pointIndex);
 

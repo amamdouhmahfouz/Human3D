@@ -82,3 +82,33 @@ Point<glm::vec3> Mesh::getPointAtIndex(unsigned int pointIndex) {
         if (points[i].index == pointIndex)
             return points[i];
 }
+
+Point<glm::vec3> Mesh::getPoint(unsigned int index) {
+    for (int i = 0; i < points.size(); i++) {
+        if (points[i].index == index) {
+            return points[i];
+        }
+    }
+
+    std::cerr << "Point not found...\n";
+    return Point<glm::vec3>(glm::vec3(0,0,0),-1);
+}
+
+void Mesh::computeNormals() {
+
+    // erase normals if already exists
+    normals.clear();
+
+    unsigned int normalIndex = 0;
+    for (auto& face : triangleCells) {
+        glm::vec3 vertex1 = getPoint(face.indexVertex1).position;
+        glm::vec3 vertex2 = getPoint(face.indexVertex2).position;
+        glm::vec3 vertex3 = getPoint(face.indexVertex3).position;
+        glm::vec3 normal = glm::normalize(glm::triangleNormal(vertex1, vertex2, vertex3));
+        
+        normals.push_back(Point<glm::vec3>(normal, normalIndex));
+        face.indexNormal = normalIndex;
+        normalIndex++;
+    }
+
+}
