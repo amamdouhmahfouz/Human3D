@@ -2,6 +2,7 @@
 #define PCA_H
 
 #include "Model.h"
+#include "DeformationField.h"
 #include <Eigen/SVD>
 #include <Eigen/Dense>
 #include <cmath>
@@ -10,6 +11,7 @@
 class PCA {
 public:
     PCA(std::vector<Model> models);
+    PCA(std::vector<std::vector<DeformationField>> defFields);
     ~PCA();
 
     Eigen::MatrixXf getData() const;

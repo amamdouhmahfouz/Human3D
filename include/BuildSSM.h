@@ -53,6 +53,11 @@ public:
 
     void createPCA();
 
+    Mesh vectorXfToMesh(Eigen::VectorXf vec);
+    Eigen::VectorXf MeshToVectorXf(Mesh m);
+
+    Mesh sampleSSM(Eigen::VectorXf coefficients);
+
 };
 
 

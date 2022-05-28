@@ -28,6 +28,11 @@ void Mesh::setMesh(std::vector<Point<glm::vec3>> points, std::vector<glm::vec3> 
     this->faces = faces;
 }
 
+void Mesh::setMesh(std::vector<Point<glm::vec3>> points, std::vector<TriangleCell> triangleCells) {
+    this->points = points;
+    this->triangleCells = triangleCells;
+}
+
 void Mesh::setMesh(std::vector<Point<glm::vec3>> points) {
     this->points = points;
 }

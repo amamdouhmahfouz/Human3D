@@ -29,6 +29,7 @@ public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<glm::vec3> faces);
     ~Mesh();
 
+    void setMesh(std::vector<Point<glm::vec3>> points, std::vector<TriangleCell> triangleCells);
     void setMesh(std::vector<Point<glm::vec3>> points, std::vector<glm::vec3> faces);
     void setMesh(std::vector<Point<glm::vec3>> points);
     Point<glm::vec3> getClosestPoint(glm::vec3 point); // should return a Point instead

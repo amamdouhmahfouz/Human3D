@@ -119,16 +119,32 @@ int main() {
     glm::vec3 aa  = rotmat * glm::vec4(from, 1.0f);
     std::cout << "aa.position: (" << aa.x << ", " << aa.y << ", " << aa.z << ")\n"; 
     
+    //Mesh sampledMesh = ssm.createMeanModel().mesh;//ssm.sampleSSM(coefficients);
+
+
     ssm.computeGPA();
 
+    ssm.models[8].mesh.computeNormals();
     // test saving a mesh after computing generalized procrustes alignment
     ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTest1.obj",
-     ssm.models[5].mesh.points, ssm.models[5].mesh.pointIds, ssm.models[5].mesh.triangleCells,
-     ssm.models[5].mesh.normals, ssm.models[5].mesh.textureCoords);
+     ssm.models[8].mesh.points, ssm.models[8].mesh.pointIds, ssm.models[8].mesh.triangleCells,
+     ssm.models[8].mesh.normals, ssm.models[8].mesh.textureCoords);
     
 
     ssm.createPCA();
 
+    Eigen::VectorXf coefficients(9);
+    coefficients.setZero();
+    coefficients[0] = -0.05f;
+
+    Mesh sampledMesh =  ssm.sampleSSM(coefficients); //ssm.createMeanModel().mesh ;//
+    sampledMesh.computeNormals();
+
+
+
+    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampled.obj",
+     sampledMesh.points, sampledMesh.pointIds, sampledMesh.triangleCells,
+     sampledMesh.normals, sampledMesh.textureCoords);
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);

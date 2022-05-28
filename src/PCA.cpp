@@ -43,6 +43,45 @@ PCA::PCA(std::vector<Model> models) {
 
 }
 
+PCA::PCA(std::vector<std::vector<DeformationField>> defFields) {
+    std::vector<std::vector<float>> vertices;
+
+    for (int i = 0; i < defFields.size(); i++) {
+        std::vector<float> vertices_i;
+        for (int j = 0; j < defFields[i].size(); j++) {
+            float x = defFields[i][j].vectorField.x;
+            float y = defFields[i][j].vectorField.y;
+            float z = defFields[i][j].vectorField.z;
+            vertices_i.push_back(x);
+            vertices_i.push_back(y);
+            vertices_i.push_back(z);
+        }
+
+        vertices.push_back(vertices_i);
+    }
+
+    this->nrows = vertices.size();
+    this->ncols = vertices[0].size();
+ 
+
+    // row #0: x11,y11,z11,x12,y12,z12,x13........,
+    // row #1: x21,y21,z21,....
+    // each row is a sample, i.e all vertices from a model
+    data = Eigen::MatrixXf(this->nrows, this->ncols);
+
+    // loop on samples
+    for (int row = 0; row < this->nrows; row++) {
+        // loop on vertices
+        for (int col = 0; col < this->ncols; col++) {
+            data(row, col) = vertices[row][col];
+        }
+    }
+
+    std::cout << "data.rows(): " << data.rows() << "\n";
+    std::cout << "data.cols(): " << data.cols() << "\n";
+
+}
+
 void PCA::computeEig() {
 
     // deMean the data
@@ -60,7 +99,8 @@ void PCA::computeEig() {
     std::cout << "accuracy " << eigenValues.head(k).sum() / eigenValues.sum() * 1.0 << std::endl;
     
     // TODO: apply threshold to get the best PCA vectors (best principal components)
-
+    
+    //std::cout << "eigSVD.matrixV().rows(): " << eigSVD.matrixV().rows() << "\n";
     // eigenVectors =  eigSVD.matrixV().block(0, 0, this->ncols, k);
     eigenVectors =  eigSVD.matrixV().block(0, 0, this->ncols, this->nrows);
     
@@ -87,7 +127,10 @@ Eigen::MatrixXf PCA::getTopKEigenVectors(int k) const {
 }
 
 Eigen::VectorXf PCA::getProjection(Eigen::VectorXf vec) const {
-    return eigenVectors.transpose() * vec;
+    // return eigenVectors.transpose() * vec;
+    std::cout << "vec.rows(): " << vec.rows() << "\n";
+    std::cout << "vec.cols(): " << vec.cols() << "\n";
+    return eigenVectors * vec;
 }
 
 Eigen::VectorXf PCA::getMean() const {
