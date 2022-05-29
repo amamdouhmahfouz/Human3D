@@ -18,7 +18,7 @@ float angleBetween(
  return glm::degrees(glm::acos(glm::dot(da, db)));
 }
 
-int main() {
+int main(int argc, char *argv[]) {
 
     std::cout << "[BuildSSM] included successfully\n";
 
@@ -135,8 +135,8 @@ int main() {
 
     Eigen::VectorXf coefficients(9);
     coefficients.setZero();
-    coefficients[0] = -0.05f;
-
+    coefficients[atoi(argv[1])] = std::stof(argv[2]);
+    std::cout << "argv[1]: " << std::stof(argv[1]) << "\n";
     Mesh sampledMesh =  ssm.sampleSSM(coefficients); //ssm.createMeanModel().mesh ;//
     sampledMesh.computeNormals();
 

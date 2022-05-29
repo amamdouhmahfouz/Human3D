@@ -125,3 +125,7 @@ add_executable(fileWrite_test fileWrite_test.cpp)
 
 add_executable(matrix_test matrix_test.cpp ${THIRD_PARTY_SOURCES})
 target_link_libraries(matrix_test glfw Eigen3::Eigen)
+
+add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+target_link_libraries(landmarks_test glfw Eigen3::Eigen)
+
