@@ -145,6 +145,9 @@ int main(int argc, char *argv[]) {
     ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampled.obj",
      sampledMesh.points, sampledMesh.pointIds, sampledMesh.triangleCells,
      sampledMesh.normals, sampledMesh.textureCoords);
+
+    ssm.readIdsIndicesLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index.json");
+    ssm.saveLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledLandmarks.json",sampledMesh);
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);

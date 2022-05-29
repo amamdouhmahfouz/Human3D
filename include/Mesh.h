@@ -39,7 +39,7 @@ public:
     void deScale(); // makes the scale of the mesh = 1
     void computeNormals();
     void updateNormals();
-
+    void scale(unsigned int s);
 
     Point<glm::vec3> getPointAtIndex(unsigned int pointIndex);
 

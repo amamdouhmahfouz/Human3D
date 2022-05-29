@@ -10,7 +10,8 @@
 #include "DeformationField.h"
 #include "Alignment.h"
 #include "PCA.h"
-
+#include <json/json.hpp>
+#include <fstream>
 
 
 class BuildSSM {
@@ -22,6 +23,7 @@ private:
     Model* referenceModel;
     std::vector<Model> restOfModels; // does not include the referenceMesh
 
+    nlohmann::json idsIndicesJson;
 
     float averageHeight;
     float averageWeight;
@@ -58,6 +60,8 @@ public:
 
     Mesh sampleSSM(Eigen::VectorXf coefficients);
 
+    void readIdsIndicesLandmarks(const std::string& json_path);
+    void saveLandmarks(std::string json_path, Mesh m);
 };
 
 

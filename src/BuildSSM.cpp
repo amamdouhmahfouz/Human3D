@@ -256,3 +256,33 @@ Mesh BuildSSM::sampleSSM(Eigen::VectorXf coefficients) {
     return sampledMesh;
 
 }
+
+
+void BuildSSM::readIdsIndicesLandmarks(const std::string& json_path) {
+    std::ifstream json_file(json_path);
+    // read as json file
+    json_file >> this->idsIndicesJson;
+    json_file.close();
+
+    std::cout << "idsIndicesJson.size(): " << idsIndicesJson.size() << "\n";
+}
+
+void BuildSSM::saveLandmarks(std::string json_path, Mesh m) {
+    
+    nlohmann::json newLmsJson;
+    int k = 0;
+    for (nlohmann::json::iterator it = idsIndicesJson.begin(); it != idsIndicesJson.end(); ++it) {
+        // get id and index from idsIndicesJson
+        std::string id = (*it)["id"];
+        unsigned int index = (*it)["index"];
+        Point<glm::vec3> point = m.getPointAtIndex(index);
+
+        // save in newLmsJson
+        newLmsJson[k]["id"] = id;
+        newLmsJson[k]["coordinates"] = {point.position.x, point.position.y, point.position.z};
+        k++;
+    }
+    std::ofstream writeJson(json_path);
+    writeJson << std::setw(4) << newLmsJson << std::endl;
+    
+}
