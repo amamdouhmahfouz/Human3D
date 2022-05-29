@@ -117,7 +117,7 @@ void Mesh::computeNormals() {
     }
 
 }
-void Mesh::scale(unsigned int s) {
+void Mesh::scale(float s) {
     for (int i = 0; i < points.size(); i++) {
         points[i].position *= s;
     }

@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     sampledMesh.computeNormals();
 
 
-
+    sampledMesh.scale(1000.0f);
     ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampled.obj",
      sampledMesh.points, sampledMesh.pointIds, sampledMesh.triangleCells,
      sampledMesh.normals, sampledMesh.textureCoords);
