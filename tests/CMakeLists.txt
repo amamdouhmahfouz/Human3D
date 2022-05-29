@@ -7,6 +7,10 @@ find_package( OpenCV REQUIRED )
 
 find_package (Eigen3 3.3 REQUIRED)
 
+#find_package(h5cpp REQUIRED)
+find_package(HDF5 REQUIRED CXX HL)
+
+
 get_filename_component(DIR_ONE_ABOVE ../ ABSOLUTE)
 
 set(ENABLE_ASSIMP   ON CACHE BOOL "Add Open Asset Import Library (assimp) to the project" FORCE)
@@ -55,6 +59,7 @@ include_directories(
     third_party/glm
     third_party/imgui
     third_party/utils
+    third_party/hdf5/1.12.2/include
     )
 
 file(GLOB ALL_SOURCES
@@ -129,3 +134,7 @@ target_link_libraries(matrix_test glfw Eigen3::Eigen)
 add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 target_link_libraries(landmarks_test glfw Eigen3::Eigen)
 
+# add_executable(hdf5_test hdf5_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+# target_link_libraries(hdf5_test HDF5::HDF5 glfw Eigen3::Eigen)
+add_executable(hdf5_test hdf5_test.cpp)
+target_link_libraries(hdf5_test HDF5::HDF5)
