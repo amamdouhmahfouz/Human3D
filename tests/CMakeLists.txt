@@ -54,10 +54,10 @@ set(THIRD_PARTY_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 include_directories( 
     ${OpenCV_INCLUDE_DIRS} 
     ${DIR_ONE_ABOVE}/include/
-    third_party/glfw/include
-    third_party/glad/include
+    #third_party/glfw/include
+    #third_party/glad/include
     third_party/glm
-    third_party/imgui
+    #third_party/imgui
     third_party/utils
     third_party/hdf5/1.12.2/include
     )
@@ -93,8 +93,8 @@ message(STATUS "ASSIMP ENABLED out")
 target_link_libraries(assimp_test glfw assimp)
 
 
-add_executable(ui_test ui_test.cpp ${DIR_ONE_ABOVE}/src/UI.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(ui_test glfw)
+#add_executable(ui_test ui_test.cpp ${DIR_ONE_ABOVE}/src/UI.cpp ${THIRD_PARTY_SOURCES})
+#target_link_libraries(ui_test glfw)
 
 #target_include_directories(GLEW_210 PUBLIC glew-2.1.0/include)
 #link_libraries(${GLEW_LIBRARIES})
@@ -116,8 +116,11 @@ target_link_libraries(mesh_test glfw Eigen3::Eigen)
 add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 target_link_libraries(model_test glfw assimp Eigen3::Eigen)
 
-add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(buildSSM_test glfw Eigen3::Eigen)
+add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
+target_link_libraries(buildSSM_test 
+    PRIVATE HDF5::HDF5 
+    #PRIVATE glfw 
+    PRIVATE Eigen3::Eigen )
 
 add_executable(strings_test strings_test.cpp)
 

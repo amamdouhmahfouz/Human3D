@@ -2,15 +2,15 @@
 #define UI_H
 
 #include <string>
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
+//#include <glad/gl.h>
+//#include <GLFW/glfw3.h>
 #include <iostream>
 
 class UI {
 private: 
     std::string windowTitle = "UI";
     int windowWidth = 1280, windowHeight = 720;
-    GLFWwindow * window = nullptr;
+    //GLFWwindow * window = nullptr;
     void openglConfig();
 
 public: 
