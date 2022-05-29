@@ -22,6 +22,7 @@ public:
     Eigen::MatrixXf getTopKEigenVectors(int k) const;
     Eigen::VectorXf getProjection(Eigen::VectorXf vec) const;
     Eigen::VectorXf getMean() const;
+    Eigen::MatrixXf getEigenVectors() const;
 
 private:  
     Eigen::MatrixXf data; // original data

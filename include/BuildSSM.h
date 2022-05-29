@@ -12,6 +12,8 @@
 #include "PCA.h"
 #include <json/json.hpp>
 #include <fstream>
+#include "H5Cpp.h"
+using namespace H5;
 
 
 class BuildSSM {
@@ -62,6 +64,8 @@ public:
 
     void readIdsIndicesLandmarks(const std::string& json_path);
     void saveLandmarks(std::string json_path, Mesh m);
+    void savePCAModel(const std::string& model_path);
+    void loadPCAModel(const std::string& model_path);
 };
 
 

@@ -4,6 +4,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+
 void printVec(glm::vec3 v) {
     std::cout << "vec: (" << v.x << ", " << v.y << ", " << v.z << ")\n";
 }
@@ -148,6 +149,7 @@ int main(int argc, char *argv[]) {
 
     ssm.readIdsIndicesLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index.json");
     ssm.saveLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledLandmarks.json",sampledMesh);
+    ssm.savePCAModel("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/pcaModel.h5");
     // std::string test_str = "/aa/bb/cc.json";
     // std::string delim = ".json";
     // std::size_t pos = test_str.find(delim);

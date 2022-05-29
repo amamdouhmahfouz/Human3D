@@ -286,3 +286,128 @@ void BuildSSM::saveLandmarks(std::string json_path, Mesh m) {
     writeJson << std::setw(4) << newLmsJson << std::endl;
     
 }
+
+void BuildSSM::savePCAModel(const std::string& model_path) {
+    
+    const H5std_string FILE_NAME(model_path);
+    const H5std_string DATASET_NAME1("/model/mean");
+    const H5std_string DATASET_NAME2("/model/noiseVariance");
+    const H5std_string DATASET_NAME3("/model/pcaBasis");
+    const H5std_string DATASET_NAME4("/model/pcaVariance");
+
+    const H5std_string DATASET_NAME5("/objStructure/verticesCells"); // vertices indices cells
+    const H5std_string DATASET_NAME6("/objStructure/textureCells"); // texture coordinates indices cells
+    const H5std_string DATASET_NAME7("/objStructure/textureCoordinates");
+
+    Model mean = createMeanModel();
+    Eigen::VectorXf meanVector = MeshToVectorXf(mean.mesh);
+    Eigen::MatrixXf eigenVectors = pcaModel->getEigenVectors();
+    Eigen::VectorXf eigenValues = pcaModel->getEigenValues();
+
+    const int DIM_MEAN = 3*10475;
+    const int DIM_NOISE_VARIANCE = 1;
+    const int rowsPCA = 31425;
+    const int colsPCA = 9;
+
+    float mean_data[DIM_MEAN];
+    float noiseVariance[DIM_NOISE_VARIANCE];
+    float pcaBasis[rowsPCA][colsPCA];
+    float pcaVariance[colsPCA];
+    
+
+    try {
+        // Turn off the auto-printing when failure occurs so that we can
+        // handle the errors appropriately
+        Exception::dontPrint();
+
+        // 1. Create a new file using the default property lists.
+        H5File file(FILE_NAME, H5F_ACC_TRUNC);
+
+        // 2. Create Groups
+        Group groupModel(file.createGroup("/model"));
+
+        // 3. Create Data
+        for (int i = 0; i < DIM_MEAN; i++){
+            mean_data[i] = meanVector[i];
+        }
+        noiseVariance[0] = 0.0;
+
+        for (int i = 0; i < rowsPCA; i++) {
+            for (int j = 0; j < colsPCA; j++) {
+                pcaBasis[i][j] = eigenVectors(i,j);
+            }
+        }
+
+        for (int i = 0; i < colsPCA; i++) {
+            pcaVariance[i] = eigenValues[i];
+        }
+
+        // 4. Create dataspace for mean
+        hsize_t dimsMean[1]; // dataset dimensions
+        dimsMean[0]              = DIM_MEAN;
+        DataSpace *dataspace = new DataSpace(1, dimsMean);
+        // 5. Create the dataset in group
+        DataSet *dataset = new DataSet(file.createDataSet(DATASET_NAME1, PredType::NATIVE_FLOAT, *dataspace));
+        // Write the data to the dataset using default memory space, file
+        // space, and transfer properties.
+        dataset->write(mean_data, PredType::NATIVE_FLOAT);
+        // Close the current dataset and data space.
+        delete dataset;
+        delete dataspace;
+
+        // noiseVariance
+        hsize_t dimsNoiseVariance[1];
+        dimsNoiseVariance[0]   = 1;
+        dataspace = new DataSpace(1, dimsNoiseVariance);
+        dataset = new DataSet(groupModel.createDataSet(DATASET_NAME2, PredType::NATIVE_FLOAT, *dataspace));
+        dataset->write(noiseVariance, PredType::NATIVE_FLOAT);
+        delete dataset;
+        delete dataspace;
+
+        // pcaBasis
+        hsize_t dimsPCABasis[2];
+        dimsPCABasis[0]   = rowsPCA;
+        dimsPCABasis[1]   = colsPCA;
+        dataspace = new DataSpace(2, dimsPCABasis);
+        dataset = new DataSet(groupModel.createDataSet(DATASET_NAME3, PredType::NATIVE_FLOAT, *dataspace));
+        dataset->write(pcaBasis, PredType::NATIVE_FLOAT);
+        delete dataset;
+        delete dataspace;
+
+        // pcaVariance
+        hsize_t dimsPCAVariance[1];
+        dimsPCAVariance[0]   = colsPCA;
+        dataspace = new DataSpace(1, dimsPCAVariance);
+        dataset = new DataSet(groupModel.createDataSet(DATASET_NAME4, PredType::NATIVE_FLOAT, *dataspace));
+        dataset->write(pcaVariance, PredType::NATIVE_FLOAT);
+        delete dataset;
+        delete dataspace;
+
+
+        groupModel.close();
+
+    } // end of try block
+
+    // catch failure caused by the H5File operations
+    catch (FileIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    // catch failure caused by the DataSet operations
+    catch (DataSetIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    // catch failure caused by the DataSpace operations
+    catch (DataSpaceIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+}
+
+void BuildSSM::loadPCAModel(const std::string& model_path) {
+
+}
