@@ -142,5 +142,11 @@ target_link_libraries(buildSSM_test
 add_executable(hdf5_test hdf5_test.cpp)
 target_link_libraries(hdf5_test HDF5::HDF5)
 
+add_executable(hdf5C_test hdf5C_test.cpp)
+target_link_libraries(hdf5C_test HDF5::HDF5)
+
+add_executable(hdf5Read_test hdf5Read_test.cpp)
+target_link_libraries(hdf5Read_test HDF5::HDF5)
+
 add_executable(readPCAModel_test readPCAModel_test.cpp ${ALL_SOURCES})
 target_link_libraries(readPCAModel_test HDF5::HDF5 Eigen3::Eigen)
