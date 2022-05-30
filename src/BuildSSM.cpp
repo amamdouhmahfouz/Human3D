@@ -9,6 +9,10 @@ BuildSSM::BuildSSM(const std::string& dir_path) {
 
 }
 
+BuildSSM::BuildSSM() {
+
+}
+
 void BuildSSM::add_files_to_vec(const std::string& dir, const std::string& delim, std::vector<std::string>& v) {
     for (const auto& file: std::filesystem::directory_iterator(dir)) {
         std::string filename = file.path();
@@ -225,7 +229,7 @@ Mesh BuildSSM::vectorXfToMesh(Eigen::VectorXf vec) {
 }
 
 Eigen::VectorXf BuildSSM::MeshToVectorXf(Mesh m) {
-
+    std::cout << "m.points.size(): " << m.points.size() << "\n";
     Eigen::VectorXf vec(3*m.points.size());
 
     int k = 0;
@@ -295,9 +299,9 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     const H5std_string DATASET_NAME3("/model/pcaBasis");
     const H5std_string DATASET_NAME4("/model/pcaVariance");
 
-    const H5std_string DATASET_NAME5("/objStructure/verticesCells"); // vertices indices cells
-    const H5std_string DATASET_NAME6("/objStructure/textureCells"); // texture coordinates indices cells
-    const H5std_string DATASET_NAME7("/objStructure/textureCoordinates");
+    //const H5std_string DATASET_NAME5("/objStructure/verticesCells"); // vertices indices cells
+    //const H5std_string DATASET_NAME6("/objStructure/textureCells"); // texture coordinates indices cells
+    //const H5std_string DATASET_NAME7("/objStructure/textureCoordinates");
 
     Model mean = createMeanModel();
     Eigen::VectorXf meanVector = MeshToVectorXf(mean.mesh);
@@ -408,6 +412,110 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
 
 }
 
-void BuildSSM::loadPCAModel(const std::string& model_path) {
+void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& reference_obj_path) {
 
+    // 1. read and save reference mesh from reference_obj_path
+    ObjLoader::loadObj(reference_obj_path, referenceMesh.points, referenceMesh.pointIds, referenceMesh.triangleCells, referenceMesh.normals, referenceMesh.textureCoords);
+
+
+    // 2. read and save mean mesh
+    // 3. read and save eigen vectors
+    // 4. read and save eigen values
+    
+
+    const H5std_string FILE_NAME(model_path);
+    const H5std_string MEAN_DATASET_NAME("/model/mean");
+    const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
+    const int          DIM0 = 31425; // dataset dimensions
+    const int          DIM1 = 9;
+
+    Eigen::VectorXf meanVector(DIM0);
+
+    float mean_data[DIM0];
+    float eigenVectors[DIM0][DIM1];
+    pcaBasis = Eigen::MatrixXf(DIM0, DIM1);
+
+    try {
+        // Turn off the auto-printing when failure occurs so that we can
+        // handle the errors appropriately
+        Exception::dontPrint();
+
+        // Open an existing file and dataset.
+        H5File  file(FILE_NAME, H5F_ACC_RDWR);
+        DataSet dataset = file.openDataSet(MEAN_DATASET_NAME);
+    
+        // Write the data to the dataset using default memory space, file
+        // space, and transfer properties.
+        dataset.read(mean_data, PredType::NATIVE_FLOAT);
+
+        // read mean data
+        for (int i = 0; i < DIM0; i++) {
+            meanVector[i] = mean_data[i];
+        }
+        meanMesh = vectorXfToMesh_w_reference(meanVector);
+
+        dataset = file.openDataSet(PCA_BASIS_DATASET_NAME);
+        dataset.read(eigenVectors, PredType::NATIVE_FLOAT);
+
+        for (int i = 0; i < DIM0; i++) {
+            for (int j = 0; j < DIM1; j++) {
+                pcaBasis(i,j) = eigenVectors[i][j];
+            }
+        }
+
+    } // end of try block
+
+    // catch failure caused by the H5File operations
+    catch (FileIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    // catch failure caused by the DataSet operations
+    catch (DataSetIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    std::cout << "pcaModel loaded...\n";
+}
+
+Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
+    Mesh newMesh;
+    std::vector<Point<glm::vec3>> points;
+    // triangle cells vertices are the same across all models
+    std::vector<TriangleCell> triangleCells = referenceMesh.triangleCells;
+
+    unsigned int pointIndex = 0;
+    for (int i = 0; i < vec.size(); i+=3) {
+        float x = vec[i];
+        float y = vec[i+1];
+        float z = vec[i+2];
+        Point<glm::vec3> point(glm::vec3(x,y,z), pointIndex);
+        pointIndex++;
+        
+        points.push_back(point);
+    }
+
+    newMesh.setMesh(points, triangleCells);
+    newMesh.textureCoords = referenceMesh.textureCoords;
+    // newMesh.computeNormals();
+    return newMesh;
+}
+
+Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
+    Eigen::VectorXf projection = this->pcaBasis * coefficients;
+
+    std::cout << "projection.sum(): " << projection.sum() << "\n";
+    
+    Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);
+    std::cout << "meanVector done\n";
+    std::cout << "meanVector.size(): " << meanVector.size() << ", " << "projection.size(): " << projection.size() << "\n";
+    Eigen::VectorXf sample = meanVector + projection;
+    std::cout << "sample done\n";
+    Mesh sampledMesh = vectorXfToMesh_w_reference(sample);
+    sampledMesh.textureCoords = referenceMesh.textureCoords;
+    sampledMesh.pointIds = referenceMesh.pointIds;
+    sampledMesh.computeNormals();
+    return sampledMesh;
 }

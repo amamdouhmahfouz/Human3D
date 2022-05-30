@@ -78,19 +78,19 @@ message(STATUS "DIR_ONE_ABOVE: ${DIR_ONE_ABOVE}")
 set(PIXEL_SRCS ${DIR_ONE_ABOVE}/src/Pixel.cpp)
 message(STATUS "PIXEL_SRCS: ${PIXEL_SRCS}")
 
-add_executable( pixel_test pixel_test.cpp ${PIXEL_SRCS})
-target_link_libraries( pixel_test  )
+# add_executable( pixel_test pixel_test.cpp ${PIXEL_SRCS})
+# target_link_libraries( pixel_test  )
 
 
-add_executable(glfw_test glfw_test.cpp ${THIRD_PARTY_SOURCES} )
-target_link_libraries(glfw_test glfw)
+# add_executable(glfw_test glfw_test.cpp ${THIRD_PARTY_SOURCES} )
+# target_link_libraries(glfw_test glfw)
 
 #add_subdirectory(third_party)
 #message(STATUS "ADDED assimp")
-add_executable(assimp_test assimp_test.cpp ${THIRD_PARTY_SOURCES})
+# add_executable(assimp_test assimp_test.cpp ${THIRD_PARTY_SOURCES})
 
 message(STATUS "ASSIMP ENABLED out")
-target_link_libraries(assimp_test glfw assimp)
+#target_link_libraries(assimp_test glfw assimp)
 
 
 #add_executable(ui_test ui_test.cpp ${DIR_ONE_ABOVE}/src/UI.cpp ${THIRD_PARTY_SOURCES})
@@ -98,23 +98,23 @@ target_link_libraries(assimp_test glfw assimp)
 
 #target_include_directories(GLEW_210 PUBLIC glew-2.1.0/include)
 #link_libraries(${GLEW_LIBRARIES})
-add_executable(drawPoint_test drawPoint_test.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(drawPoint_test 
-    PRIVATE glfw
-    PRIVATE libglew_static 
-)
+# add_executable(drawPoint_test drawPoint_test.cpp ${THIRD_PARTY_SOURCES})
+# target_link_libraries(drawPoint_test 
+#     PRIVATE glfw
+#     PRIVATE libglew_static 
+# )
 
-add_executable(drawTriangle_test drawTriangle_test.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(drawTriangle_test 
-    PRIVATE glfw
-    PRIVATE libglew_static 
-)
+# add_executable(drawTriangle_test drawTriangle_test.cpp ${THIRD_PARTY_SOURCES})
+# target_link_libraries(drawTriangle_test 
+#     PRIVATE glfw
+#     PRIVATE libglew_static 
+# )
 
-add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${DIR_ONE_ABOVE}/src/Point.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(mesh_test glfw Eigen3::Eigen)
+# add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${DIR_ONE_ABOVE}/src/Point.cpp ${THIRD_PARTY_SOURCES})
+# target_link_libraries(mesh_test glfw Eigen3::Eigen)
 
-add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(model_test glfw assimp Eigen3::Eigen)
+# add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+# target_link_libraries(model_test glfw assimp Eigen3::Eigen)
 
 add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
 target_link_libraries(buildSSM_test 
@@ -122,22 +122,25 @@ target_link_libraries(buildSSM_test
     #PRIVATE glfw 
     PRIVATE Eigen3::Eigen )
 
-add_executable(strings_test strings_test.cpp)
+# add_executable(strings_test strings_test.cpp)
 
-add_executable(point_test point_test.cpp  ${DIR_ONE_ABOVE}/src/Point.cpp)
+# add_executable(point_test point_test.cpp  ${DIR_ONE_ABOVE}/src/Point.cpp)
 
-add_executable(objloader_test objloader_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(objloader_test glfw assimp Eigen3::Eigen)
+# add_executable(objloader_test objloader_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+# target_link_libraries(objloader_test glfw assimp Eigen3::Eigen)
 
-add_executable(fileWrite_test fileWrite_test.cpp)
+# add_executable(fileWrite_test fileWrite_test.cpp)
 
-add_executable(matrix_test matrix_test.cpp ${THIRD_PARTY_SOURCES})
-target_link_libraries(matrix_test glfw Eigen3::Eigen)
+# add_executable(matrix_test matrix_test.cpp ${THIRD_PARTY_SOURCES})
+# target_link_libraries(matrix_test glfw Eigen3::Eigen)
 
-add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-target_link_libraries(landmarks_test glfw Eigen3::Eigen)
+# add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
+# target_link_libraries(landmarks_test glfw Eigen3::Eigen)
 
 # add_executable(hdf5_test hdf5_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 # target_link_libraries(hdf5_test HDF5::HDF5 glfw Eigen3::Eigen)
 add_executable(hdf5_test hdf5_test.cpp)
 target_link_libraries(hdf5_test HDF5::HDF5)
+
+add_executable(readPCAModel_test readPCAModel_test.cpp ${ALL_SOURCES})
+target_link_libraries(readPCAModel_test HDF5::HDF5 Eigen3::Eigen)
