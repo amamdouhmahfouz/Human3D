@@ -2,15 +2,6 @@
 #include <string> 
 #include "BuildSSM.h"
 
-// #include "H5Cpp.h"
-// using namespace H5;
-
-// const H5std_string FILE_NAME("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/pcaModel.h5");
-// const H5std_string DATASET_NAME("/model/mean");
-// const H5std_string DATASET_NAME2("/model/pcaBasis");
-// const int          DIM0 = 31425; // dataset dimensions
-// const int          DIM1 = 9;
-
 
 int main(int argc, char *argv[]) {
 

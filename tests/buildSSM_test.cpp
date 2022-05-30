@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "[BuildSSM] included successfully\n";
 
-    std::string male_dir = "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/data/male_T_60_noexp";
+    std::string male_dir = "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/data/male_T_80_noexp";
     BuildSSM ssm(male_dir);
     std::size_t p = male_dir.find_last_of('/');
     std::cout << "p: " << p << "\n";

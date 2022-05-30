@@ -279,6 +279,7 @@ void BuildSSM::saveLandmarks(std::string json_path, Mesh m) {
         // get id and index from idsIndicesJson
         std::string id = (*it)["id"];
         unsigned int index = (*it)["index"];
+        //std::cout << "index: " << index << "\n";
         Point<glm::vec3> point = m.getPointAtIndex(index);
 
         // save in newLmsJson
@@ -316,15 +317,22 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     const int DIM_MEAN = 3*10475;
     const int DIM_NOISE_VARIANCE = 1;
     const int rowsPCA = 31425;
-    const int colsPCA = 59;
+    const int colsPCA = 79;
 
+    // TODO: ********** define the following arrays dynamically (i.e using new)
     std::cout << "created mean_data before\n";
-    float mean_data[DIM_MEAN];
+    float *_mean_data = new float[DIM_MEAN];
+    //float mean_data[DIM_MEAN];
     std::cout << "created mean_data\n";
-    float noiseVariance[DIM_NOISE_VARIANCE];
-    float pcaBasis[rowsPCA][colsPCA];
+    float *_noiseVariance = new float[DIM_NOISE_VARIANCE];
+    //float noiseVariance[DIM_NOISE_VARIANCE];
+    //float **_pcaBasis = new float*[rowsPCA];
+    //for (int i = 0; i < rowsPCA; i++) _pcaBasis[i] = new float[colsPCA];
+    float *_pcaBasis = new float[rowsPCA*colsPCA];
+    //float pcaBasis[rowsPCA][colsPCA];
     std::cout << "created pcaBasis\n";
-    float pcaVariance[colsPCA];
+    float *_pcaVariance = new float[colsPCA];
+    //float pcaVariance[colsPCA];
     std::cout << "created pcaVariance\n";
     
 
@@ -341,18 +349,19 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
 
         // 3. Create Data
         for (int i = 0; i < DIM_MEAN; i++){
-            mean_data[i] = meanVector[i];
+            _mean_data[i] = meanVector[i];
         }
-        noiseVariance[0] = 0.0;
+        _noiseVariance[0] = 0.0;
         std::cout << "mean_data saved\n";
         for (int i = 0; i < rowsPCA; i++) {
             for (int j = 0; j < colsPCA; j++) {
-                pcaBasis[i][j] = eigenVectors(i,j);
+                _pcaBasis[i*colsPCA + j] = eigenVectors(i,j);
             }
         }
         std::cout << "pcaBasis saved\n";
         for (int i = 0; i < colsPCA; i++) {
-            pcaVariance[i] = eigenValues[i];
+            _pcaVariance[i] = eigenValues[i];
+            //std::cout << "pcaVariance[i]: " << pcaVariance[i] << "\n"; 
         }
 
         // 4. Create dataspace for mean
@@ -363,7 +372,7 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
         DataSet *dataset = new DataSet(file.createDataSet(DATASET_NAME1, PredType::NATIVE_FLOAT, *dataspace));
         // Write the data to the dataset using default memory space, file
         // space, and transfer properties.
-        dataset->write(mean_data, PredType::NATIVE_FLOAT);
+        dataset->write(_mean_data, PredType::NATIVE_FLOAT);
         // Close the current dataset and data space.
         delete dataset;
         delete dataspace;
@@ -373,9 +382,20 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
         dimsNoiseVariance[0]   = 1;
         dataspace = new DataSpace(1, dimsNoiseVariance);
         dataset = new DataSet(groupModel.createDataSet(DATASET_NAME2, PredType::NATIVE_FLOAT, *dataspace));
-        dataset->write(noiseVariance, PredType::NATIVE_FLOAT);
+        dataset->write(_noiseVariance, PredType::NATIVE_FLOAT);
         delete dataset;
         delete dataspace;
+
+
+    // pcaVariance
+        hsize_t dimsPCAVariance[1];
+        dimsPCAVariance[0]   = colsPCA;
+        dataspace = new DataSpace(1, dimsPCAVariance);
+        dataset = new DataSet(groupModel.createDataSet(DATASET_NAME4, PredType::NATIVE_FLOAT, *dataspace));
+        dataset->write(_pcaVariance, PredType::NATIVE_FLOAT);
+        delete dataset;
+        delete dataspace;
+
 
         // pcaBasis
         hsize_t dimsPCABasis[2];
@@ -383,19 +403,24 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
         dimsPCABasis[1]   = colsPCA;
         dataspace = new DataSpace(2, dimsPCABasis);
         dataset = new DataSet(groupModel.createDataSet(DATASET_NAME3, PredType::NATIVE_FLOAT, *dataspace));
-        dataset->write(pcaBasis, PredType::NATIVE_FLOAT);
+        dataset->write(_pcaBasis, PredType::NATIVE_FLOAT);
         delete dataset;
         delete dataspace;
 
-        // pcaVariance
-        hsize_t dimsPCAVariance[1];
-        dimsPCAVariance[0]   = colsPCA;
-        dataspace = new DataSpace(1, dimsPCAVariance);
-        dataset = new DataSet(groupModel.createDataSet(DATASET_NAME4, PredType::NATIVE_FLOAT, *dataspace));
-        dataset->write(pcaVariance, PredType::NATIVE_FLOAT);
-        delete dataset;
-        delete dataspace;
+        // // pcaVariance
+        // hsize_t dimsPCAVariance[1];
+        // dimsPCAVariance[0]   = colsPCA;
+        // dataspace = new DataSpace(1, dimsPCAVariance);
+        // dataset = new DataSet(groupModel.createDataSet(DATASET_NAME4, PredType::NATIVE_FLOAT, *dataspace));
+        // dataset->write(pcaVariance, PredType::NATIVE_FLOAT);
+        // delete dataset;
+        // delete dataspace;
 
+        delete [] _mean_data;
+        delete [] _noiseVariance;
+        delete [] _pcaVariance;
+        //for (int i = 0; i < rowsPCA; i++) delete[] _pcaBasis[i];
+        delete[] _pcaBasis;
 
         groupModel.close();
 
@@ -424,9 +449,13 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
 void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& reference_obj_path) {
 
     // 1. read and save reference mesh from reference_obj_path
+    std::vector<TriangleCell> cells;
     ObjLoader::loadObj(reference_obj_path, referenceMesh.points, referenceMesh.pointIds, referenceMesh.triangleCells, referenceMesh.normals, referenceMesh.textureCoords);
 
-
+    // for (auto face : referenceMesh.triangleCells) {
+    //     std::cout << "load face.indexVertex1: " << face.indexVertex1 << ", face.indexVertex2: " << face.indexVertex2 << ", face.indexVertex3: " << face.indexVertex3 << "\n";
+    // }
+    // std::cout << "finished printing\n";
     // 2. read and save mean mesh
     // 3. read and save eigen vectors
     // 4. read and save eigen values
@@ -436,13 +465,19 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
     const H5std_string MEAN_DATASET_NAME("/model/mean");
     const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
     const int          DIM0 = 31425; // dataset dimensions
-    const int          DIM1 = 59;
+    const int          DIM1 = 79;
+    const int RANK = 2;
 
     Eigen::VectorXf meanVector(DIM0);
 
-    float mean_data[DIM0];
-    float eigenVectors[DIM0][DIM1];
+    float *_mean_data = new float[DIM0];
+    std::cout << "allocated _mean_data\n";
+    //float **_eigenVectors = new float*[DIM0];
+    //for (int i = 0; i < DIM0; i++) _eigenVectors[i] = new float[DIM1];
+    float *_eigenVectors = new float[DIM0*DIM1];
+    std::cout << "allocated _eigenVectors\n";
     pcaBasis = Eigen::MatrixXf(DIM0, DIM1);
+    std::cout << "allocated pcaBasis\n";
 
     try {
         // Turn off the auto-printing when failure occurs so that we can
@@ -450,27 +485,47 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
         Exception::dontPrint();
 
         // Open an existing file and dataset.
-        H5File  file(FILE_NAME, H5F_ACC_RDWR);
+        H5File  file(FILE_NAME, H5F_ACC_RDONLY);
         DataSet dataset = file.openDataSet(MEAN_DATASET_NAME);
     
+
         // Write the data to the dataset using default memory space, file
         // space, and transfer properties.
-        dataset.read(mean_data, PredType::NATIVE_FLOAT);
+        dataset.read(_mean_data, PredType::NATIVE_FLOAT);
 
         // read mean data
         for (int i = 0; i < DIM0; i++) {
-            meanVector[i] = mean_data[i];
+            meanVector[i] = _mean_data[i];
         }
+        std::cout << "read meanVector\n";
         meanMesh = vectorXfToMesh_w_reference(meanVector);
+        std::cout << "meanMesh in loadPCA\n";
+
+
+
 
         dataset = file.openDataSet(PCA_BASIS_DATASET_NAME);
-        dataset.read(eigenVectors, PredType::NATIVE_FLOAT);
+        std::cout << "opened dataset for pcaBasis\n";
+        
+    
+
+
+        dataset.read(_eigenVectors, PredType::NATIVE_FLOAT);
+        std::cout << "read dataset _eigenVectors\n";
 
         for (int i = 0; i < DIM0; i++) {
             for (int j = 0; j < DIM1; j++) {
-                pcaBasis(i,j) = eigenVectors[i][j];
+                //pcaBasis(i,j) = _eigenVectors[i][j];
+                pcaBasis(i,j) = _eigenVectors[i*DIM1 + j];
+                //std::cout << "pcaBases("<<i<<","<<j<<"): " <<pcaBasis(i,j) << "\n";
             }
         }
+        std::cout << "read pcaBasis loadPca\n";
+
+
+        delete [] _mean_data;
+        //for (int i = 0; i < DIM0; i++) delete[] _eigenVectors[i];
+        delete[] _eigenVectors;
 
     } // end of try block
 
@@ -495,6 +550,10 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
     // triangle cells vertices are the same across all models
     std::vector<TriangleCell> triangleCells = referenceMesh.triangleCells;
 
+    // for (auto face : referenceMesh.triangleCells) {
+    //     std::cout << "vec face.indexVertex1: " << face.indexVertex1 << ", face.indexVertex2: " << face.indexVertex2 << ", face.indexVertex3: " << face.indexVertex3 << "\n";
+    // }
+
     unsigned int pointIndex = 0;
     for (int i = 0; i < vec.size(); i+=3) {
         float x = vec[i];
@@ -514,6 +573,17 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
 
 Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
     Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+
+    // for (int i = 0; i < this->pcaBasis.block(0,0,31425,10).rows(); i++) {
+    //     for(int j = 0; j < this->pcaBasis.block(0,0,31425,10).cols(); j++) {
+    //         std::cout << this->pcaBasis.block(0,0,31425,10)(i,j) << " ";
+    //     }
+    //     std::cout << "\n";
+    // }
+
+    // for (auto face : referenceMesh.triangleCells) {
+    //     std::cout << "face.indexVertex1: " << face.indexVertex1 << ", face.indexVertex2: " << face.indexVertex2 << ", face.indexVertex3: " << face.indexVertex3 << "\n";
+    // }
 
     std::cout << "projection.sum(): " << projection.sum() << "\n";
     

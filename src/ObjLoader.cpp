@@ -49,7 +49,7 @@ void ObjLoader::loadObj(std::string obj_path, std::vector<Point<glm::vec3>>& _po
 
             sscanf(_positions[i]->c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", 
                    &v1,&vt1,&n1, &v2,&vt2,&n1, &v3,&vt3,&n1);
-        
+            //std::cout << "v1: " << v1 << ", v2: " << v2 << ", v3: " << v3 << "\n";
             _faces.push_back(TriangleCell(v1-1,v2-1,v3-1,n1-1,triangleIndex,vt1-1,vt2-1,vt3-1));
             triangleIndex += 1;
         }
