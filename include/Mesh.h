@@ -13,9 +13,7 @@ class Mesh {
 private:  
     Point<glm::vec3> getPoint(unsigned int index);
 public:  
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-    std::vector<glm::vec3> faces;
+
 
     std::vector<Point<glm::vec3>> points;
     std::vector<unsigned int> pointIds;
@@ -24,13 +22,10 @@ public:
     std::vector<Point<glm::vec2>> textureCoords;
 
     Mesh();
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
     Mesh(std::vector<Point<glm::vec3>> points);
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<glm::vec3> faces);
     ~Mesh();
 
     void setMesh(std::vector<Point<glm::vec3>> points, std::vector<TriangleCell> triangleCells);
-    void setMesh(std::vector<Point<glm::vec3>> points, std::vector<glm::vec3> faces);
     void setMesh(std::vector<Point<glm::vec3>> points);
     Point<glm::vec3> getClosestPoint(glm::vec3 point); // should return a Point instead
     glm::vec3 getCenterOfMass() const;

@@ -130,8 +130,8 @@ Eigen::VectorXf PCA::getProjection(Eigen::VectorXf vec) const {
     // return eigenVectors.transpose() * vec;
     std::cout << "vec.rows(): " << vec.rows() << "\n";
     std::cout << "vec.cols(): " << vec.cols() << "\n";
-    std::cout << "eigenVectors.rows(): " << eigenVectors.rows() << ", eigenVectors.cols(): " << eigenVectors.cols() << "\n";
-    return eigenVectors * vec;
+    std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,10).cols() << "\n";
+    return eigenVectors.block(0,0,31425,10) * vec;
 }
 
 Eigen::VectorXf PCA::getMean() const {

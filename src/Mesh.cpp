@@ -4,29 +4,15 @@ Mesh::Mesh() {
   
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices) {
-    this->vertices = vertices;
-    this->indices = indices;
-}
-
 Mesh::Mesh(std::vector<Point<glm::vec3>> points) {
     this->points = points;
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<glm::vec3> faces) {
-    this->vertices = vertices;
-    this->indices = indices;
-    this->faces = faces;
-}
 
 Mesh::~Mesh() {
 
 }
 
-void Mesh::setMesh(std::vector<Point<glm::vec3>> points, std::vector<glm::vec3> faces) {
-    this->points = points;
-    this->faces = faces;
-}
 
 void Mesh::setMesh(std::vector<Point<glm::vec3>> points, std::vector<TriangleCell> triangleCells) {
     this->points = points;
@@ -78,14 +64,12 @@ void Mesh::deScale() {
     }
 }
 
-// void Mesh::updateNormals() {
-//     for (int i = 0; i < normals.size(); )
-// }
 
 Point<glm::vec3> Mesh::getPointAtIndex(unsigned int pointIndex) {
     for (int i = 0; i < points.size(); i++) 
         if (points[i].index == pointIndex)
             return points[i];
+    return Point<glm::vec3>(glm::vec3(0,0,0), -1);
 }
 
 Point<glm::vec3> Mesh::getPoint(unsigned int index) {

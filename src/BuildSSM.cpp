@@ -189,16 +189,16 @@ void BuildSSM::createPCA() {
     pcaModel = new PCA(deformationFields);
     pcaModel->computeEig();
 
-    Eigen::VectorXf coefficients(9);
-    coefficients.setZero();
-    std::cout << "coefficients.size(): " << coefficients.size() << "\n";
-    std::cout << "coefficients[0]: " << coefficients[0] << "\n";
-    std::cout << "coefficients[1]: " << coefficients[1] << "\n";
-    coefficients[0] = 1.0f;
-    std::cout << "coefficients[0]: " << coefficients[0] << "\n";
+    // Eigen::VectorXf coefficients(59);
+    // coefficients.setZero();
+    // std::cout << "coefficients.size(): " << coefficients.size() << "\n";
+    // std::cout << "coefficients[0]: " << coefficients[0] << "\n";
+    // std::cout << "coefficients[1]: " << coefficients[1] << "\n";
+    // coefficients[0] = 1.0f;
+    // std::cout << "coefficients[0]: " << coefficients[0] << "\n";
 
-    Eigen::VectorXf projection = pcaModel->getProjection(coefficients);
-    std::cout << "projection.size(): " << projection.size() << "\n";
+    // Eigen::VectorXf projection = pcaModel->getProjection(coefficients);
+    // std::cout << "projection.size(): " << projection.size() << "\n";
 }
 
 
@@ -288,11 +288,12 @@ void BuildSSM::saveLandmarks(std::string json_path, Mesh m) {
     }
     std::ofstream writeJson(json_path);
     writeJson << std::setw(4) << newLmsJson << std::endl;
-    
+    std::cout << "saved landmarks\n";
 }
 
 void BuildSSM::savePCAModel(const std::string& model_path) {
     
+    std::cout << "saving pca model\n";
     const H5std_string FILE_NAME(model_path);
     const H5std_string DATASET_NAME1("/model/mean");
     const H5std_string DATASET_NAME2("/model/noiseVariance");
@@ -304,19 +305,27 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     //const H5std_string DATASET_NAME7("/objStructure/textureCoordinates");
 
     Model mean = createMeanModel();
+    std::cout << "created mean model\n";
     Eigen::VectorXf meanVector = MeshToVectorXf(mean.mesh);
+    std::cout << "created mean vector\n";
     Eigen::MatrixXf eigenVectors = pcaModel->getEigenVectors();
+    std::cout << "created eigenVectors\n";
     Eigen::VectorXf eigenValues = pcaModel->getEigenValues();
+    std::cout << "created eigenValues\n";
 
     const int DIM_MEAN = 3*10475;
     const int DIM_NOISE_VARIANCE = 1;
     const int rowsPCA = 31425;
-    const int colsPCA = 9;
+    const int colsPCA = 59;
 
+    std::cout << "created mean_data before\n";
     float mean_data[DIM_MEAN];
+    std::cout << "created mean_data\n";
     float noiseVariance[DIM_NOISE_VARIANCE];
     float pcaBasis[rowsPCA][colsPCA];
+    std::cout << "created pcaBasis\n";
     float pcaVariance[colsPCA];
+    std::cout << "created pcaVariance\n";
     
 
     try {
@@ -335,13 +344,13 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
             mean_data[i] = meanVector[i];
         }
         noiseVariance[0] = 0.0;
-
+        std::cout << "mean_data saved\n";
         for (int i = 0; i < rowsPCA; i++) {
             for (int j = 0; j < colsPCA; j++) {
                 pcaBasis[i][j] = eigenVectors(i,j);
             }
         }
-
+        std::cout << "pcaBasis saved\n";
         for (int i = 0; i < colsPCA; i++) {
             pcaVariance[i] = eigenValues[i];
         }
@@ -427,7 +436,7 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
     const H5std_string MEAN_DATASET_NAME("/model/mean");
     const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
     const int          DIM0 = 31425; // dataset dimensions
-    const int          DIM1 = 9;
+    const int          DIM1 = 59;
 
     Eigen::VectorXf meanVector(DIM0);
 
@@ -504,7 +513,7 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
 }
 
 Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
-    Eigen::VectorXf projection = this->pcaBasis * coefficients;
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
 
     std::cout << "projection.sum(): " << projection.sum() << "\n";
     
