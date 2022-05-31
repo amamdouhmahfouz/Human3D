@@ -68,3 +68,68 @@ void Model::setMetadata(float height, float weight) {
     this->height = height;
     this->weight = weight;
 }
+
+void Model::computeLandmarksPositions(nlohmann::json idsIndicesJson) {
+    for (nlohmann::json::iterator it = idsIndicesJson.begin(); it != idsIndicesJson.end(); ++it) {
+        // get id and index from idsIndicesJson
+        std::string id = (*it)["id"];
+        unsigned int index = (*it)["index"];
+        
+        Point<glm::vec3> point = mesh.getPointAtIndex(index);
+        
+        idsPoints.insert(std::make_pair(id, point));
+    }
+
+    std::map<std::string, Point<glm::vec3>>::iterator it;
+    it = idsPoints.find("nosetip");
+    
+    std::cout << "idsPoints[nosetip].position.x: " << it->second.position.x << "\n";
+}
+
+float Model::computeModelHeight() {
+
+    std::map<std::string, Point<glm::vec3>>::iterator it;
+    
+    it = idsPoints.find("head.top");
+    glm::vec3 head_top = it->second.position;
+    std::cout << "head_top: (" << head_top.x << ", " << head_top.y << ", " << head_top.z << ")\n";
+
+    it = idsPoints.find("foot.left.bottom.center");
+    glm::vec3 foot_bottom = it->second.position;
+    std::cout << "foot_bottom: (" << foot_bottom.x << ", " << foot_bottom.y << ", " << foot_bottom.z << ")\n";
+
+    
+    float model_height = sqrt(pow(head_top.x - foot_bottom.x, 2) + pow(head_top.y - foot_bottom.y, 2) + pow(head_top.z - foot_bottom.z, 2));    
+    //std::cout << "s: " << s << "\n";
+    //float modeHeight = glm::distance(head_top, foot_bottom);
+    this->modelHeight = model_height;
+    return model_height;
+}
+
+float Model::computeArmSpan() {
+    std::map<std::string, Point<glm::vec3>>::iterator it;
+    
+    it = idsPoints.find("fist.right.fist");
+    glm::vec3 fist_right = it->second.position;
+
+    it = idsPoints.find("fist.left.fist");
+    glm::vec3 fist_left = it->second.position;
+
+    float armSpan = sqrt(pow(fist_right.x - fist_left.x, 2) + pow(fist_right.y - fist_left.y, 2) + pow(fist_right.z - fist_left.z, 2));
+
+    return armSpan;
+}
+
+float Model::computeShoulderWidth() {
+    std::map<std::string, Point<glm::vec3>>::iterator it;
+    
+    it = idsPoints.find("shoulder.right.top");
+    glm::vec3 shoulder_right = it->second.position;
+
+    it = idsPoints.find("shoulder.left.top");
+    glm::vec3 shoulder_left = it->second.position;
+
+    float shoulderWidth = sqrt(pow(shoulder_right.x - shoulder_left.x, 2) + pow(shoulder_right.y - shoulder_left.y, 2) + pow(shoulder_right.z - shoulder_left.z, 2));
+    std::cout << "shoulder: " << glm::distance(shoulder_left, shoulder_right) << "\n";
+    return shoulderWidth;
+}

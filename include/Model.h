@@ -6,6 +6,8 @@
 #include <fstream>
 #include <json/json.hpp>
 #include <iostream>
+#include <map>
+#include <utility>
 #include "Vertex.h"
 #include "Mesh.h"
 #include "ObjLoader.h"
@@ -16,6 +18,9 @@ private:
     std::string gender;
     float height;
     float weight;
+
+    float modelHeight;
+    std::map<std::string, Point<glm::vec3>> idsPoints;
 
     std::string getNameFromFile(const std::string& filepath, const std::string& file_extension);
 public:
@@ -35,6 +40,10 @@ public:
     std::string getGender() const;
     std::string getName() const;
     glm::vec3 getCenterOfMass() const;
+    void computeLandmarksPositions(nlohmann::json idsIndicesJson);
+    float computeModelHeight();
+    float computeArmSpan();
+    float computeShoulderWidth();
 };
 
 
