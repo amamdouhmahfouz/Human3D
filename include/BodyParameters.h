@@ -4,8 +4,8 @@
 
 class BodyParameters {
 public:
-    BodyParameters();
-    ~BodyParameters();
+    BodyParameters() { }
+    ~BodyParameters() { }
 
     float armSpan;
     float shoulderWidth;
