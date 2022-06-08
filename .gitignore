@@ -11,5 +11,12 @@ tests/01.obj
 tests/lib/
 tests/third_party/
 
+
 data/male/
 data/female/
+data/male_T
+data/male_T_60
+data/male_T_60_noexp
+data/male_T_70
+data/male_T_80
+data/male_T_80_noexp
