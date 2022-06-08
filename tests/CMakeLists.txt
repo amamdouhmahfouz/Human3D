@@ -153,3 +153,6 @@ target_link_libraries(readPCAModel_test HDF5::HDF5 Eigen3::Eigen)
 
 add_executable(model2_test model2_test.cpp  ${ALL_SOURCES} )
 target_link_libraries(model2_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(proposals_test proposals_test.cpp  ${ALL_SOURCES} )
+target_link_libraries(proposals_test HDF5::HDF5 Eigen3::Eigen)
