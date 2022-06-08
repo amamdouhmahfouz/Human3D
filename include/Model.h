@@ -11,6 +11,7 @@
 #include "Vertex.h"
 #include "Mesh.h"
 #include "ObjLoader.h"
+#include "BodyParameters.h"
 
 class Model {
 private: 
@@ -44,6 +45,8 @@ public:
     float computeModelHeight();
     float computeArmSpan();
     float computeShoulderWidth();
+
+    BodyParameters computeBodyParameters();
 };
 
 

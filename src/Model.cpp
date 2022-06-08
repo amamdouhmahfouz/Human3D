@@ -133,3 +133,13 @@ float Model::computeShoulderWidth() {
     std::cout << "shoulder: " << glm::distance(shoulder_left, shoulder_right) << "\n";
     return shoulderWidth;
 }
+
+BodyParameters Model::computeBodyParameters() {
+    BodyParameters params;
+
+    params.armSpan = computeArmSpan();
+    params.shoulderWidth = computeShoulderWidth();
+    params.height = computeModelHeight();
+
+    return params;
+}
