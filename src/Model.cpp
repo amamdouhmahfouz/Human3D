@@ -14,6 +14,11 @@ Model::Model(Mesh mesh, float weight, float height) {
     this->height = height;
 }
 
+Model::Model(Mesh mesh, nlohmann::json idsIndicesJson) {
+    this->mesh = mesh;
+    computeLandmarksPositions(idsIndicesJson);
+}
+
 void Model::loadModel(const std::string& filename) {
     ObjLoader::loadObj(filename, mesh.points, mesh.pointIds, mesh.triangleCells, mesh.normals, mesh.textureCoords);
 }
@@ -70,6 +75,8 @@ void Model::setMetadata(float height, float weight) {
 }
 
 void Model::computeLandmarksPositions(nlohmann::json idsIndicesJson) {
+    idsPoints.clear();
+
     for (nlohmann::json::iterator it = idsIndicesJson.begin(); it != idsIndicesJson.end(); ++it) {
         // get id and index from idsIndicesJson
         std::string id = (*it)["id"];
@@ -83,7 +90,7 @@ void Model::computeLandmarksPositions(nlohmann::json idsIndicesJson) {
     std::map<std::string, Point<glm::vec3>>::iterator it;
     it = idsPoints.find("nosetip");
     
-    std::cout << "idsPoints[nosetip].position.x: " << it->second.position.x << "\n";
+    //std::cout << "idsPoints[nosetip].position.x: " << it->second.position.x << "\n";
 }
 
 float Model::computeModelHeight() {
@@ -92,11 +99,11 @@ float Model::computeModelHeight() {
     
     it = idsPoints.find("head.top");
     glm::vec3 head_top = it->second.position;
-    std::cout << "head_top: (" << head_top.x << ", " << head_top.y << ", " << head_top.z << ")\n";
+    //std::cout << "head_top: (" << head_top.x << ", " << head_top.y << ", " << head_top.z << ")\n";
 
     it = idsPoints.find("foot.left.bottom.center");
     glm::vec3 foot_bottom = it->second.position;
-    std::cout << "foot_bottom: (" << foot_bottom.x << ", " << foot_bottom.y << ", " << foot_bottom.z << ")\n";
+    //std::cout << "foot_bottom: (" << foot_bottom.x << ", " << foot_bottom.y << ", " << foot_bottom.z << ")\n";
 
     
     float model_height = sqrt(pow(head_top.x - foot_bottom.x, 2) + pow(head_top.y - foot_bottom.y, 2) + pow(head_top.z - foot_bottom.z, 2));    
@@ -130,7 +137,7 @@ float Model::computeShoulderWidth() {
     glm::vec3 shoulder_left = it->second.position;
 
     float shoulderWidth = sqrt(pow(shoulder_right.x - shoulder_left.x, 2) + pow(shoulder_right.y - shoulder_left.y, 2) + pow(shoulder_right.z - shoulder_left.z, 2));
-    std::cout << "shoulder: " << glm::distance(shoulder_left, shoulder_right) << "\n";
+    //std::cout << "shoulder: " << glm::distance(shoulder_left, shoulder_right) << "\n";
     return shoulderWidth;
 }
 
@@ -138,8 +145,11 @@ BodyParameters Model::computeBodyParameters() {
     BodyParameters params;
 
     params.armSpan = computeArmSpan();
+    //std::cout << "****** params.armSpan: " << params.armSpan << "\n";
     params.shoulderWidth = computeShoulderWidth();
+    //std::cout << "****** params.shoulderWidth: " << params.shoulderWidth << "\n";
     params.height = computeModelHeight();
+    //std::cout << "****** params.height: " << params.height << "\n";
 
     return params;
 }

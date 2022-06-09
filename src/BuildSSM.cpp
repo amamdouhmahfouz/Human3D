@@ -229,7 +229,7 @@ Mesh BuildSSM::vectorXfToMesh(Eigen::VectorXf vec) {
 }
 
 Eigen::VectorXf BuildSSM::MeshToVectorXf(Mesh m) {
-    std::cout << "m.points.size(): " << m.points.size() << "\n";
+    //std::cout << "m.points.size(): " << m.points.size() << "\n";
     Eigen::VectorXf vec(3*m.points.size());
 
     int k = 0;
@@ -247,7 +247,7 @@ Mesh BuildSSM::sampleSSM(Eigen::VectorXf coefficients) {
     // multiply the coefficients by the eigen vectors matrix
     Eigen::VectorXf projection = pcaModel->getProjection(coefficients);
 
-    std::cout << "projection.sum(): " << projection.sum() << "\n";
+    //std::cout << "projection.sum(): " << projection.sum() << "\n";
     Model meanModel = createMeanModel();
 
     Eigen::VectorXf meanVector = MeshToVectorXf(meanModel.mesh);
@@ -471,13 +471,13 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
     Eigen::VectorXf meanVector(DIM0);
 
     float *_mean_data = new float[DIM0];
-    std::cout << "allocated _mean_data\n";
+    //std::cout << "allocated _mean_data\n";
     //float **_eigenVectors = new float*[DIM0];
     //for (int i = 0; i < DIM0; i++) _eigenVectors[i] = new float[DIM1];
     float *_eigenVectors = new float[DIM0*DIM1];
-    std::cout << "allocated _eigenVectors\n";
+    //std::cout << "allocated _eigenVectors\n";
     pcaBasis = Eigen::MatrixXf(DIM0, DIM1);
-    std::cout << "allocated pcaBasis\n";
+    //std::cout << "allocated pcaBasis\n";
 
     try {
         // Turn off the auto-printing when failure occurs so that we can
@@ -497,21 +497,21 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
         for (int i = 0; i < DIM0; i++) {
             meanVector[i] = _mean_data[i];
         }
-        std::cout << "read meanVector\n";
+        //std::cout << "read meanVector\n";
         meanMesh = vectorXfToMesh_w_reference(meanVector);
-        std::cout << "meanMesh in loadPCA\n";
+        //std::cout << "meanMesh in loadPCA\n";
 
 
 
 
         dataset = file.openDataSet(PCA_BASIS_DATASET_NAME);
-        std::cout << "opened dataset for pcaBasis\n";
+        //std::cout << "opened dataset for pcaBasis\n";
         
     
 
 
         dataset.read(_eigenVectors, PredType::NATIVE_FLOAT);
-        std::cout << "read dataset _eigenVectors\n";
+        //std::cout << "read dataset _eigenVectors\n";
 
         for (int i = 0; i < DIM0; i++) {
             for (int j = 0; j < DIM1; j++) {
@@ -520,7 +520,7 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
                 //std::cout << "pcaBases("<<i<<","<<j<<"): " <<pcaBasis(i,j) << "\n";
             }
         }
-        std::cout << "read pcaBasis loadPca\n";
+        //std::cout << "read pcaBasis loadPca\n";
 
 
         delete [] _mean_data;
@@ -585,16 +585,20 @@ Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
     //     std::cout << "face.indexVertex1: " << face.indexVertex1 << ", face.indexVertex2: " << face.indexVertex2 << ", face.indexVertex3: " << face.indexVertex3 << "\n";
     // }
 
-    std::cout << "projection.sum(): " << projection.sum() << "\n";
+    //std::cout << "projection.sum(): " << projection.sum() << "\n";
     
     Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);
-    std::cout << "meanVector done\n";
-    std::cout << "meanVector.size(): " << meanVector.size() << ", " << "projection.size(): " << projection.size() << "\n";
+    //std::cout << "meanVector done\n";
+    //std::cout << "meanVector.size(): " << meanVector.size() << ", " << "projection.size(): " << projection.size() << "\n";
     Eigen::VectorXf sample = meanVector + projection;
-    std::cout << "sample done\n";
+    //std::cout << "sample done\n";
     Mesh sampledMesh = vectorXfToMesh_w_reference(sample);
     sampledMesh.textureCoords = referenceMesh.textureCoords;
     sampledMesh.pointIds = referenceMesh.pointIds;
     sampledMesh.computeNormals();
     return sampledMesh;
+}
+
+nlohmann::json BuildSSM::getIdsIndicesJson() const {
+    return idsIndicesJson;
 }

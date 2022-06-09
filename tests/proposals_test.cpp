@@ -10,15 +10,15 @@ void printVec(std::vector<float> v) {
 
 int main () {
 
-    std::cout << "GaussianProposal included successfully\n";
+    // std::cout << "GaussianProposal included successfully\n";
 
-    GaussianProposal gauss(0.1);
-    std::vector<float> v{1,2,3,4,5};
+    // GaussianProposal gauss(0.1);
+    // std::vector<float> v{1,2,3,4,5};
 
-    std::vector<float> proposed = gauss.propose(v);
+    // std::vector<float> proposed = gauss.propose(v);
 
-    std::cout << "proposed params: ";
-    printVec(proposed);
+    // std::cout << "proposed params: ";
+    // printVec(proposed);
 
     return 0;
 }

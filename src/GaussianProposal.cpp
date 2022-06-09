@@ -11,17 +11,17 @@ GaussianProposal::~GaussianProposal() {
 
 }
 
-std::vector<float> GaussianProposal::propose(std::vector<float> params) {
-    std::vector<float> proposedParams;
-
-    for (const auto& param : params) {
-        proposedParams.push_back(param + standardDeviation * distribution(generator) );
+Eigen::VectorXf GaussianProposal::propose(Eigen::VectorXf params) {
+    Eigen::VectorXf proposedParams(params.size());
+    
+    for (int i = 0; i < params.size(); i++) {
+        proposedParams[i] = params[i] + standardDeviation * distribution(generator) ;
     }
 
     return proposedParams;
 }
 
-float GaussianProposal::evaluateLogTransitionProbability(std::vector<float> fromParams, std::vector<float> toParams) {
+float GaussianProposal::evaluateLogTransitionProbability(Eigen::VectorXf fromParams, Eigen::VectorXf toParams) {
     
     float sumLogValues = 0.0;
 

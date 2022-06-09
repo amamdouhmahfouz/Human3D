@@ -29,6 +29,7 @@ public:
 
     Model(const std::string &filename);
     Model(Mesh mesh);
+    Model(Mesh mesh, nlohmann::json idsIndicesJson);
     Model(Mesh mesh, float weight, float height);
     ~Model();
 

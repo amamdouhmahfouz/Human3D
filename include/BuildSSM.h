@@ -71,6 +71,7 @@ public:
     Mesh sampleSSM(Eigen::VectorXf coefficients);
 
     void readIdsIndicesLandmarks(const std::string& json_path);
+    nlohmann::json getIdsIndicesJson() const;
     void saveLandmarks(std::string json_path, Mesh m);
     void savePCAModel(const std::string& model_path);
     void loadPCAModel(const std::string& model_path, const std::string& reference_obj_path);

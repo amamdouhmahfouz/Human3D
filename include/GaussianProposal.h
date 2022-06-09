@@ -10,8 +10,8 @@ public:
     GaussianProposal(float standardDeviation);
     ~GaussianProposal();
 
-    std::vector<float> propose(std::vector<float> params) override;
-    float evaluateLogTransitionProbability(std::vector<float> fromParams, std::vector<float> toParams) override;
+    Eigen::VectorXf propose(Eigen::VectorXf params) override;
+    float evaluateLogTransitionProbability(Eigen::VectorXf fromParams, Eigen::VectorXf toParams) override;
 
 private:
     std::default_random_engine generator;
