@@ -156,3 +156,6 @@ target_link_libraries(model2_test HDF5::HDF5 Eigen3::Eigen)
 
 add_executable(proposals_test proposals_test.cpp  ${ALL_SOURCES} )
 target_link_libraries(proposals_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(metropolis_test metropolis_test.cpp  ${ALL_SOURCES} )
+target_link_libraries(metropolis_test HDF5::HDF5 Eigen3::Eigen)
