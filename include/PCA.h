@@ -6,7 +6,7 @@
 #include <Eigen/SVD>
 #include <Eigen/Dense>
 #include <cmath>
-
+#include <Eigen/Eigenvalues>
 
 class PCA {
 public:

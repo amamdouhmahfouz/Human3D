@@ -41,6 +41,9 @@ PCA::PCA(std::vector<Model> models) {
     std::cout << "data.cols(): " << data.cols() << "\n";
 
 
+    
+
+
 }
 
 PCA::PCA(std::vector<std::vector<DeformationField>> defFields) {
@@ -86,6 +89,8 @@ void PCA::computeEig() {
 
     // deMean the data
     mean = data.colwise().mean();
+    
+
 
     Eigen::VectorXf identity(this->nrows);
     identity.setOnes();
@@ -93,8 +98,9 @@ void PCA::computeEig() {
 
     // get eigne vectors and eigen values
     Eigen::JacobiSVD<Eigen::MatrixXf> eigSVD(data, Eigen::ComputeThinU | Eigen::ComputeThinV);
+    //Eigen::JacobiSVD<Eigen::MatrixXf> eigSVD(data, Eigen::ComputeThinV);
 
-    int k = 8;
+    int k = 2;
     eigenValues = eigSVD.singularValues();
     std::cout << "accuracy " << eigenValues.head(k).sum() / eigenValues.sum() * 1.0 << std::endl;
     
@@ -104,8 +110,6 @@ void PCA::computeEig() {
     // eigenVectors =  eigSVD.matrixV().block(0, 0, this->ncols, k);
     eigenVectors =  eigSVD.matrixV().block(0, 0, this->ncols, this->nrows);
     
-    //std::cout << "eigenVectors: \n";
-    //std::cout << eigenVectors << std::endl;
 
     for (int i = 0; i < eigenValues.size(); i++) {
         std::cout << "eigenValue: " << eigenValues[i] << "\n";
@@ -114,6 +118,53 @@ void PCA::computeEig() {
     std::cout << "eigenVector.size(): " << eigenValues.size() << "\n";
     std::cout << "eigenVectors.rows(): " << eigenVectors.rows() << "\n";
     std::cout << "eigenVectors.cols(): " << eigenVectors.cols() << "\n";
+
+    std::cout << "eigSVD.matrixV().rows(): " << eigSVD.matrixV().rows() << "\n";
+    std::cout << "eigSVD.matrixV().cols(): " << eigSVD.matrixV().cols() << "\n";
+    std::cout << "eigSVD.matrixU().rows(): " << eigSVD.matrixU().rows() << "\n";
+    std::cout << "eigSVD.matrixU().cols(): " << eigSVD.matrixU().cols() << "\n";
+    std::cout << "eigSVD.singularValues().asDiagonal().rows(): " << eigSVD.singularValues().asDiagonal().rows() << "\n";
+    std::cout << "eigSVD.singularValues().asDiagonal().cols(): " << eigSVD.singularValues().asDiagonal().cols() << "\n";
+
+
+    // std::cout << "mean.rows(): " << mean.rows() << "\n";
+    // std::cout << "mean.cols(): " << mean.cols() << "\n";
+
+    // Eigen::VectorXf mean2 = data.rowwise().mean();
+    // std::cout << "mean2.rows(): " << mean2.rows() << "\n";
+    // std::cout << "mean2.cols(): " << mean2.cols() << "\n"; 
+
+    // std::cout << "------------------ using eigen solver ---------------------\n";
+    // Eigen::EigenSolver<Eigen::MatrixXf> solver;
+    // solver.compute(data, true);
+    // std::cout << "The eigenvalues of data are: " << solver.eigenvalues() << endl;
+  
+    // std::cout << "------------------ finished eigen solver ---------------------\n";
+
+    std::cout << "------------------ using svdNew ---------------------\n";
+    Eigen::MatrixXf covariance = (data * data.transpose()) * ((float)1.0f/(float)(data.rows()-1));
+    Eigen::JacobiSVD<Eigen::MatrixXf> svdNew(covariance, Eigen::ComputeThinV);
+    Eigen::VectorXf singularValues = svdNew.singularValues();
+    Eigen::MatrixXf matV = svdNew.matrixV();
+    Eigen::VectorXf singSqrt = singularValues.array().sqrt();
+    Eigen::VectorXf singSqrtInv = Eigen::VectorXf::Zero(singSqrt.rows());
+
+    unsigned numComponentsAboveTolerance =
+          ((singularValues.array() - 0.0 - 1e-6) > 0).count();
+    std::cout << "numComponentsAboveTolerance: " << numComponentsAboveTolerance << "\n";
+    for (int i = 0; i < singSqrt.size(); i++) {
+        if (singSqrt(i) >= 1e-6) {
+            singSqrtInv(i) = 1.0f / singSqrt(i);
+        }
+        //std::cout << "singSqrt("<<i<<"): " << singSqrt(i) << "\n";
+    }
+    Eigen::MatrixXf pcaBasis = data.transpose() * matV * singSqrtInv.asDiagonal();
+    pcaBasis /= sqrt(data.rows() - 1.0);
+    eigenVectors = pcaBasis;
+    std::cout << "pcaBasis.rows(): " << pcaBasis.rows() << "\n";
+    std::cout << "pcaBasis.cols(): " << pcaBasis.cols() << "\n";
+    std::cout << "------------------ finished svdNew ---------------------\n";
+
 }
 
 
@@ -131,7 +182,9 @@ Eigen::VectorXf PCA::getProjection(Eigen::VectorXf vec) const {
     std::cout << "vec.rows(): " << vec.rows() << "\n";
     std::cout << "vec.cols(): " << vec.cols() << "\n";
     std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,10).cols() << "\n";
+    //std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,299).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,299).cols() << "\n";
     return eigenVectors.block(0,0,31425,10) * vec;
+    //return eigenVectors.block(0,0,31425,299) * vec;
 }
 
 Eigen::VectorXf PCA::getMean() const {
