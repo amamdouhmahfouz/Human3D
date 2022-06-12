@@ -6,6 +6,7 @@
 #include <iostream>
 #include <filesystem>
 #include <glm/glm.hpp>
+#include <chrono>
 #include "Model.h"
 #include "DeformationField.h"
 #include "Alignment.h"
@@ -76,6 +77,7 @@ public:
     void savePCAModel(const std::string& model_path);
     void loadPCAModel(const std::string& model_path, const std::string& reference_obj_path);
     Mesh instance(Eigen::VectorXf coefficients); // used when loading a model
+    Mesh instanceNoNormals(Eigen::VectorXf coefficients); // used when loading a model
 };
 
 

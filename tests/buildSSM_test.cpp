@@ -15,17 +15,18 @@ int main(int argc, char *argv[]) {
 
     std::cout << "[BuildSSM] included successfully\n";
 
-    std::string male_dir = "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/data/male_T_80_noexp";
+    std::string male_dir = "/Users/abdelrahmanabdelghany/Downloads/data11_noexp";
+    //std::string male_dir = "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/data/male_T_80_noexp";
     BuildSSM ssm(male_dir);
     std::size_t p = male_dir.find_last_of('/');
     std::cout << "p: " << p << "\n";
     
     ssm.createModelsFromFiles();
     std::cout << "[BuildSSM] created models from files\n";
-
+ssm.computeGPA();
     ssm.createDeformationFields();
 
-    ssm.computeGPA();
+    //ssm.computeGPA();
 
     // ssm.models[8].mesh.computeNormals();
     // // test saving a mesh after computing generalized procrustes alignment
@@ -45,14 +46,14 @@ int main(int argc, char *argv[]) {
 
 
     sampledMesh.scale(1000.0f);
-    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampled_T.obj",
+    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampled300_T.obj",
      sampledMesh.points, sampledMesh.pointIds, sampledMesh.triangleCells,
      sampledMesh.normals, sampledMesh.textureCoords);
 
     ssm.readIdsIndicesLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index.json");
-    ssm.saveLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledLandmarks_T.json",sampledMesh);
+    ssm.saveLandmarks("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledLandmarks300_T.json",sampledMesh);
     std::cout << "going to save pca model\n";
-    ssm.savePCAModel("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/pcaModel_male_T.h5");
+    ssm.savePCAModel("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/pcaModel_male_300_T.h5");
 
     return 0;
 }

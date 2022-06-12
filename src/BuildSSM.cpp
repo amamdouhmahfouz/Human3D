@@ -159,25 +159,31 @@ void BuildSSM::computeGPA() {
     // 3. choose arbitray reference model
     Model ref = models[0];
 
-    // TODO: check if greater than or less than previous error, i.e make it a while loop, do something ba2a fo this
-    for (int k = 0; k < 2; k++) {
-        // 4. align all models to the reference model
-        for (int i = 0; i < models.size(); i++) {
-            Alignment::RotationAlignment(models[i], ref); // aligns models[i] in-place(pass by reference)
-        }
-        // 5. compute mean shape of ALL the aligned+reference shapes
-        Model referenceMeanModel = createMeanModel();
-        // 6. calculate procrustes distance between mean shape and referece
-        error = Alignment::procrustesDistance(ref, referenceMeanModel);
-        // 7. procrustes distance is above a certain threshold, set 
-        std::cout << "error: " << error << "\n";
-        // 8. the reference to mean shape and go to step 4
-        ref = referenceMeanModel;
-    }
+    // // TODO: check if greater than or less than previous error, i.e make it a while loop, do something ba2a fo this
+    // for (int k = 0; k < 2; k++) {
+    //     // 4. align all models to the reference model
+    //     for (int i = 0; i < models.size(); i++) {
+    //         Alignment::RotationAlignment(models[i], ref); // aligns models[i] in-place(pass by reference)
+    //     }
+    //     // 5. compute mean shape of ALL the aligned+reference shapes
+    //     Model referenceMeanModel = createMeanModel();
+    //     // 6. calculate procrustes distance between mean shape and referece
+    //     error = Alignment::procrustesDistance(ref, referenceMeanModel);
+    //     // 7. procrustes distance is above a certain threshold, set 
+    //     std::cout << "error: " << error << "\n";
+    //     // 8. the reference to mean shape and go to step 4
+    //     ref = referenceMeanModel;
+    // }
  
-    // update the actual reference model
-    this->referenceModel = &ref;
+    // // update the actual reference model
+    // this->referenceModel = &ref;
 
+
+    for (int i = 0; i < models.size(); i++) {
+        Model referenceMeanModel = createMeanModel();
+        Alignment::ICP(models[i], referenceMeanModel);
+    }
+    //exit(0);
 }
 
 void BuildSSM::buildCovarianceMatrix() {
@@ -185,20 +191,89 @@ void BuildSSM::buildCovarianceMatrix() {
 }
 
 void BuildSSM::createPCA() {
-    //pcaModel = new PCA(models);
+
     pcaModel = new PCA(deformationFields);
+    //pcaModel = new PCA(models);
     pcaModel->computeEig();
 
-    // Eigen::VectorXf coefficients(59);
-    // coefficients.setZero();
-    // std::cout << "coefficients.size(): " << coefficients.size() << "\n";
-    // std::cout << "coefficients[0]: " << coefficients[0] << "\n";
-    // std::cout << "coefficients[1]: " << coefficients[1] << "\n";
-    // coefficients[0] = 1.0f;
-    // std::cout << "coefficients[0]: " << coefficients[0] << "\n";
 
-    // Eigen::VectorXf projection = pcaModel->getProjection(coefficients);
-    // std::cout << "projection.size(): " << projection.size() << "\n";
+// std::vector<std::vector<float>> vertices;
+
+//     for (int i = 0; i < deformationFields.size(); i++) {
+//         std::vector<float> vertices_i;
+//         for (int j = 0; j < deformationFields[i].size(); j++) {
+//             float x = deformationFields[i][j].vectorField.x;
+//             float y = deformationFields[i][j].vectorField.y;
+//             float z = deformationFields[i][j].vectorField.z;
+//             vertices_i.push_back(x);
+//             vertices_i.push_back(y);
+//             vertices_i.push_back(z);
+//         }
+
+//         vertices.push_back(vertices_i);
+//     }
+
+//     int _nrows = vertices.size();
+//     int _ncols = vertices[0].size();
+ 
+
+//     // row #0: x11,y11,z11,x12,y12,z12,x13........,
+//     // row #1: x21,y21,z21,....
+//     // each row is a sample, i.e all vertices from a model
+//     Eigen::MatrixXf _data = Eigen::MatrixXf(_nrows, _ncols);
+
+//     // loop on samples
+//     for (int row = 0; row < _nrows; row++) {
+//         // loop on vertices
+//         for (int col = 0; col < _ncols; col++) {
+//             _data(row, col) = vertices[row][col];
+//         }
+//     }
+
+//     std::cout << "creating empty matrices\n";
+//     Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> input_matrix;
+// 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> centered_matrix;
+// 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> mean_matrix;
+// 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> covariance_matrix;
+
+
+
+
+//     std::cout << "centering data\n";
+//     centered_matrix = _data.rowwise() - _data.colwise().mean();
+//     mean_matrix = _data - centered_matrix;
+
+ 
+//     //
+//     // Compute covariance matrix
+//     std::cout << "centered_matrix.rows(): " << centered_matrix.rows() << "\n";
+//     std::cout << "centered_matrix.cols(): " << centered_matrix.cols() << "\n";
+
+//     std::cout << "computing cov matrix\n";
+//     auto t_start = std::chrono::high_resolution_clock::now();
+//     //covariance_matrix = (centered_matrix.adjoint() * centered_matrix) / (float)(input_matrix.rows() - 1);
+//     covariance_matrix = (centered_matrix.transpose() * centered_matrix) / (float)(_data.rows() - 1);
+//     auto t_end = std::chrono::high_resolution_clock::now();
+
+//     double elapsed_time_ms = std::chrono::duration<double, std::milli>(t_end-t_start).count();
+//     std::cout << "elapsed_time_ms: " << elapsed_time_ms << "\n";
+//     exit(0);
+
+//     Eigen::LDLT<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>> cholesky(100);
+//     std::cout << "building eigen with new method: \n";
+//     Eigen::SelfAdjointEigenSolver<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>> eigen_solver(covariance_matrix);
+// 	Eigen::Matrix<float, 1, Eigen::Dynamic> eigen_values = eigen_solver.eigenvalues();
+// 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> eigen_vectors = eigen_solver.eigenvectors();
+
+
+
+//     std::cout << "eigen_vectors.rows(): " << eigen_vectors.rows() << "\n";
+//     std::cout << "eigen_vectors.cols(): " << eigen_vectors.cols() << "\n";
+//     std::cout << "eigen_values.rows(): " << eigen_values.rows() << "\n";
+//     std::cout << "eigen_values.cols(): " << eigen_values.cols() << "\n";
+//     int x;
+//     std::cin >> x;
+   
 }
 
 
@@ -317,7 +392,8 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     const int DIM_MEAN = 3*10475;
     const int DIM_NOISE_VARIANCE = 1;
     const int rowsPCA = 31425;
-    const int colsPCA = 79;
+    //const int colsPCA = 79;
+    const int colsPCA = 299;
 
     // TODO: ********** define the following arrays dynamically (i.e using new)
     std::cout << "created mean_data before\n";
@@ -465,7 +541,8 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
     const H5std_string MEAN_DATASET_NAME("/model/mean");
     const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
     const int          DIM0 = 31425; // dataset dimensions
-    const int          DIM1 = 79;
+    //const int          DIM1 = 79;
+    const int          DIM1 = 299;
     const int RANK = 2;
 
     Eigen::VectorXf meanVector(DIM0);
@@ -573,6 +650,7 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
 
 Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
     Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
 
     // for (int i = 0; i < this->pcaBasis.block(0,0,31425,10).rows(); i++) {
     //     for(int j = 0; j < this->pcaBasis.block(0,0,31425,10).cols(); j++) {
@@ -596,6 +674,23 @@ Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
     sampledMesh.textureCoords = referenceMesh.textureCoords;
     sampledMesh.pointIds = referenceMesh.pointIds;
     sampledMesh.computeNormals();
+    return sampledMesh;
+}
+
+Mesh BuildSSM::instanceNoNormals(Eigen::VectorXf coefficients) {
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
+
+
+    Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);
+    //std::cout << "meanVector done\n";
+    //std::cout << "meanVector.size(): " << meanVector.size() << ", " << "projection.size(): " << projection.size() << "\n";
+    Eigen::VectorXf sample = meanVector + projection;
+    //std::cout << "sample done\n";
+    Mesh sampledMesh = vectorXfToMesh_w_reference(sample);
+    sampledMesh.textureCoords = referenceMesh.textureCoords;
+    sampledMesh.pointIds = referenceMesh.pointIds;
+    //sampledMesh.computeNormals();
     return sampledMesh;
 }
 
