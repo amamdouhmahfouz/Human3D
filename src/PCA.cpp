@@ -163,6 +163,9 @@ void PCA::computeEig() {
     eigenVectors = pcaBasis;
     std::cout << "pcaBasis.rows(): " << pcaBasis.rows() << "\n";
     std::cout << "pcaBasis.cols(): " << pcaBasis.cols() << "\n";
+    for (int i = 0; i < 15; i++) {
+        std::cout << "pcaVariance #"<<i<<": " << singularValues[i] << "\n";
+    }
     std::cout << "------------------ finished svdNew ---------------------\n";
 
 }
