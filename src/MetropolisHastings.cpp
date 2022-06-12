@@ -30,7 +30,7 @@ void MetropolisHastings::run(unsigned int iterations) {
     // -------------------------------------------------
 
     float bestAlpha = -99999999.99;
-    Eigen::VectorXf bestCoef;
+    Eigen::VectorXf bestCoef = shapeCoefficients;
     int countAccepted = 0;
     int countRejected = 0;
     nlohmann::json idsIndicesJson = ssm->getIdsIndicesJson();
@@ -40,7 +40,7 @@ void MetropolisHastings::run(unsigned int iterations) {
         // 1.
         Eigen::VectorXf proposalShapeCoeff = proposalDistribution->propose(shapeCoefficients);
         // 2.
-        Mesh meshInstance = ssm->instance(shapeCoefficients);
+        Mesh meshInstance = ssm->instanceNoNormals(shapeCoefficients);
         meshInstance.scale(1000.0);
         Model modelInstance(meshInstance, idsIndicesJson);
         
@@ -59,9 +59,15 @@ void MetropolisHastings::run(unsigned int iterations) {
 
         //std::cout << "proposalShapeCoeff: " << proposalShapeCoeff << "\n";
         // 3. 
-        Mesh proposedMesh = ssm->instance(proposalShapeCoeff);
+        Mesh proposedMesh = ssm->instanceNoNormals(proposalShapeCoeff);
         proposedMesh.scale(1000.0);
 
+        if (i == 0) {
+            std::cout << "proposalShapeCoeff: " << proposalShapeCoeff << "\n";
+            ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/proposedMesh.obj",
+                proposedMesh.points, proposedMesh.pointIds, proposedMesh.triangleCells,
+                proposedMesh.normals, proposedMesh.textureCoords);
+        }
         // ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshFromMetropolis.obj",
         //  proposedMesh.points, proposedMesh.pointIds, proposedMesh.triangleCells,
         //  proposedMesh.normals, proposedMesh.textureCoords);
@@ -105,17 +111,27 @@ void MetropolisHastings::run(unsigned int iterations) {
             std::cout << "rejected\n";
             std::cout << "alpha: " << alpha << "\n";
             countRejected++;
-            shapeCoefficients = proposalShapeCoeff;
-            bestCoef = shapeCoefficients;
+            //shapeCoefficients = proposalShapeCoeff;
+            //bestCoef = shapeCoefficients;
         }
     }
 
+    std::cout << "\n*********** countAccepted: " << countAccepted << "\n";
+    std::cout << "*********** countRejected: " << countRejected << "\n";
     Mesh finalMesh = ssm->instance(bestCoef);
     finalMesh.scale(1000.0);
     ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh.obj",
          finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
          finalMesh.normals, finalMesh.textureCoords);
+    Model finalModel(finalMesh, idsIndicesJson);
+    BodyParameters finalBodyParameters = finalModel.computeBodyParameters();
+    std::cout << "finalBodyParameters: \n";
+    std::cout << "finalBodyParameters.armSpan; " << finalBodyParameters.armSpan << "\n";
+    std::cout << "finalBodyParameters.shoulderWidth; " << finalBodyParameters.shoulderWidth << "\n";
+    std::cout << "finalBodyParameters.height; " << finalBodyParameters.height << "\n";
 
-    std::cout << "*********** countAccepted: " << countAccepted << "\n";
-    std::cout << "*********** countRejected: " << countRejected << "\n";
+
+
+    // std::cout << "*********** countAccepted: " << countAccepted << "\n";
+    // std::cout << "*********** countRejected: " << countRejected << "\n";
 }

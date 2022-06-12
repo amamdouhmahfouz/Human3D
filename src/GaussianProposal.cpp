@@ -15,7 +15,10 @@ Eigen::VectorXf GaussianProposal::propose(Eigen::VectorXf params) {
     Eigen::VectorXf proposedParams(params.size());
     
     for (int i = 0; i < params.size(); i++) {
-        proposedParams[i] = params[i] + standardDeviation * distribution(generator) ;
+        float r = distribution(generator);
+        //std::cout << "*********************** r = " << r << "\n";
+        proposedParams[i] = params[i] + standardDeviation *  r;
+        std::cout << "params[i] = " << params[i] << ",   proposedParams[i] = " <<  proposedParams[i] << "\n";
     }
 
     return proposedParams;

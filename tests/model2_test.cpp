@@ -19,7 +19,7 @@ void printMesh(Mesh m) {
 int main() {
 
     nlohmann::json idsIndicesJson;
-    std::ifstream json_file("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index.json");
+    std::ifstream json_file("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/data/smpl/ids_index_smpl.json");
     // read as json file
     json_file >> idsIndicesJson;
     json_file.close();
@@ -27,7 +27,7 @@ int main() {
     std::cout << "idsIndicesJson.size(): " << idsIndicesJson.size() << "\n";
     std::cout << "[Model] included successfully\n";
 
-    Model model("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledFromSavedModel_300.obj");
+    Model model("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledFromSavedModel_630.obj");
     model.computeLandmarksPositions(idsIndicesJson);
 
     float height = model.computeModelHeight();
