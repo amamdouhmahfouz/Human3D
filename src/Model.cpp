@@ -4,6 +4,13 @@ Model::Model(const std::string &filename) {
     loadModel(filename);
 }
 
+Model::Model(const std::string &filename, std::vector<TriangleCell> faces, std::vector<Point<glm::vec2>> texCoords) {
+    ObjLoader::loadBasicObj(filename, mesh.points);
+    mesh.triangleCells = faces;
+    mesh.textureCoords = texCoords;
+    //mesh.computeNormals();
+}
+
 Model::Model(Mesh mesh) {
     this->mesh = mesh;
 }

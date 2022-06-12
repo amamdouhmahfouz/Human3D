@@ -28,6 +28,7 @@ public:
     Mesh mesh;
 
     Model(const std::string &filename);
+    Model(const std::string &filename, std::vector<TriangleCell> faces, std::vector<Point<glm::vec2>> texCoords);
     Model(Mesh mesh);
     Model(Mesh mesh, nlohmann::json idsIndicesJson);
     Model(Mesh mesh, float weight, float height);

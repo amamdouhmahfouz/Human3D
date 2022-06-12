@@ -1,16 +1,22 @@
 #include "BuildSSM.h"
 
 
+BuildSSM::BuildSSM() {
+
+}
+
 BuildSSM::BuildSSM(const std::string& dir_path) {
     std::cout << "directory: " << dir_path << "\n";
     add_files_to_vec(dir_path, "json", metadata_files);
     add_files_to_vec(dir_path, "obj", meshes_files);
-
-
 }
 
-BuildSSM::BuildSSM() {
+BuildSSM::BuildSSM(const std::string& dir_path, const std::string& reference_obj) {
+    std::cout << "directory: " << dir_path << "\n";
+    add_files_to_vec(dir_path, "obj", meshes_files);
 
+    // read in the reference mesh to get the faces and texture coordinates
+    ObjLoader::readSmplUVRef(reference_obj, referenceObj.points, referenceObj.triangleCells, referenceObj.textureCoords);
 }
 
 void BuildSSM::add_files_to_vec(const std::string& dir, const std::string& delim, std::vector<std::string>& v) {
@@ -61,6 +67,15 @@ void BuildSSM::createModelsFromFiles() {
     for (int i = 0; i < models.size(); i++) {
         std::cout << models[i].getName() << "   height: " << models[i].getHeight() << "\n";
     }
+}
+
+void BuildSSM::createModelsSmpl() {
+    std::cout << "number of meshes: " << meshes_files.size() << "\n";
+    for (int i = 0; i < meshes_files.size(); i++) {
+        Model m(meshes_files[i], referenceObj.triangleCells, referenceObj.textureCoords);
+        models.push_back(m);
+    }
+    std::cout << "[BuildSSM::createModelsSmpl]::done\n";
 }
 
 void BuildSSM::createStatsFromMetadata() {
@@ -178,11 +193,13 @@ void BuildSSM::computeGPA() {
     // // update the actual reference model
     // this->referenceModel = &ref;
 
-
-    for (int i = 0; i < models.size(); i++) {
-        Model referenceMeanModel = createMeanModel();
-        Alignment::ICP(models[i], referenceMeanModel);
+    
+    for (int i = 1; i < models.size(); i++) {
+        //Model referenceMeanModel = createMeanModel();
+        //Alignment::ICP(models[i], referenceMeanModel);
+        Alignment::ICP(models[i], models[0]);
     }
+    
     //exit(0);
 }
 
@@ -336,6 +353,25 @@ Mesh BuildSSM::sampleSSM(Eigen::VectorXf coefficients) {
 
 }
 
+Mesh BuildSSM::sampleSSMSmpl(Eigen::VectorXf coefficients) {
+    // multiply the coefficients by the eigen vectors matrix
+    Eigen::VectorXf projection = pcaModel->getProjection(coefficients);
+
+    //std::cout << "projection.sum(): " << projection.sum() << "\n";
+    Model meanModel = createMeanModel();
+
+    Eigen::VectorXf meanVector = MeshToVectorXf(meanModel.mesh);
+
+    Eigen::VectorXf sample = meanVector + projection;
+
+    Mesh sampledMesh = vectorXfToMesh(sample);
+    sampledMesh.textureCoords = referenceObj.textureCoords;
+    sampledMesh.triangleCells = referenceObj.triangleCells;
+    sampledMesh.pointIds = models[0].mesh.pointIds;
+    return sampledMesh;
+
+}
+
 
 void BuildSSM::readIdsIndicesLandmarks(const std::string& json_path) {
     std::ifstream json_file(json_path);
@@ -389,11 +425,14 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     Eigen::VectorXf eigenValues = pcaModel->getEigenValues();
     std::cout << "created eigenValues\n";
 
-    const int DIM_MEAN = 3*10475;
+    //const int DIM_MEAN = 3*10475;
+    const int DIM_MEAN = 3*6890;
     const int DIM_NOISE_VARIANCE = 1;
-    const int rowsPCA = 31425;
+    //const int rowsPCA = 31425;
+    const int rowsPCA = models[0].mesh.points.size()*3;
     //const int colsPCA = 79;
-    const int colsPCA = 299;
+    //const int colsPCA = 299;
+    const int colsPCA = models.size() - 1;
 
     // TODO: ********** define the following arrays dynamically (i.e using new)
     std::cout << "created mean_data before\n";
@@ -540,10 +579,116 @@ void BuildSSM::loadPCAModel(const std::string& model_path, const std::string& re
     const H5std_string FILE_NAME(model_path);
     const H5std_string MEAN_DATASET_NAME("/model/mean");
     const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
-    const int          DIM0 = 31425; // dataset dimensions
+    //const int          DIM0 = 31425; // dataset dimensions
+    const int          DIM0 = referenceMesh.points.size()*3; // dataset dimensions
     //const int          DIM1 = 79;
-    const int          DIM1 = 299;
+    //const int          DIM1 = 299;
+    const int          DIM1 = 629;
     const int RANK = 2;
+
+    Eigen::VectorXf meanVector(DIM0);
+
+    float *_mean_data = new float[DIM0];
+    //std::cout << "allocated _mean_data\n";
+    //float **_eigenVectors = new float*[DIM0];
+    //for (int i = 0; i < DIM0; i++) _eigenVectors[i] = new float[DIM1];
+    float *_eigenVectors = new float[DIM0*DIM1];
+    //std::cout << "allocated _eigenVectors\n";
+    pcaBasis = Eigen::MatrixXf(DIM0, DIM1);
+    //std::cout << "allocated pcaBasis\n";
+
+    try {
+        // Turn off the auto-printing when failure occurs so that we can
+        // handle the errors appropriately
+        Exception::dontPrint();
+
+        // Open an existing file and dataset.
+        H5File  file(FILE_NAME, H5F_ACC_RDONLY);
+        DataSet dataset = file.openDataSet(MEAN_DATASET_NAME);
+    
+
+        // Write the data to the dataset using default memory space, file
+        // space, and transfer properties.
+        dataset.read(_mean_data, PredType::NATIVE_FLOAT);
+
+        // read mean data
+        for (int i = 0; i < DIM0; i++) {
+            meanVector[i] = _mean_data[i];
+        }
+        //std::cout << "read meanVector\n";
+        meanMesh = vectorXfToMesh_w_reference(meanVector);
+        //std::cout << "meanMesh in loadPCA\n";
+
+
+
+
+        dataset = file.openDataSet(PCA_BASIS_DATASET_NAME);
+        //std::cout << "opened dataset for pcaBasis\n";
+        
+    
+
+
+        dataset.read(_eigenVectors, PredType::NATIVE_FLOAT);
+        //std::cout << "read dataset _eigenVectors\n";
+
+        for (int i = 0; i < DIM0; i++) {
+            for (int j = 0; j < DIM1; j++) {
+                //pcaBasis(i,j) = _eigenVectors[i][j];
+                pcaBasis(i,j) = _eigenVectors[i*DIM1 + j];
+                //std::cout << "pcaBases("<<i<<","<<j<<"): " <<pcaBasis(i,j) << "\n";
+            }
+        }
+        //std::cout << "read pcaBasis loadPca\n";
+
+
+        delete [] _mean_data;
+        //for (int i = 0; i < DIM0; i++) delete[] _eigenVectors[i];
+        delete[] _eigenVectors;
+
+    } // end of try block
+
+    // catch failure caused by the H5File operations
+    catch (FileIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    // catch failure caused by the DataSet operations
+    catch (DataSetIException error) {
+        error.printErrorStack();
+        return;
+    }
+
+    std::cout << "pcaModel loaded...\n";
+}
+
+
+void BuildSSM::loadPCAModelSmpl(const std::string& model_path, const std::string& reference_obj_path) {
+
+    // 1. read and save reference mesh from reference_obj_path
+    std::vector<TriangleCell> cells;
+    ObjLoader::readSmplUVRef(reference_obj_path, referenceMesh.points,  referenceMesh.triangleCells, referenceMesh.textureCoords);
+
+    // for (auto face : referenceMesh.triangleCells) {
+    //     std::cout << "load face.indexVertex1: " << face.indexVertex1 << ", face.indexVertex2: " << face.indexVertex2 << ", face.indexVertex3: " << face.indexVertex3 << "\n";
+    // }
+    // std::cout << "finished printing\n";
+    // 2. read and save mean mesh
+    // 3. read and save eigen vectors
+    // 4. read and save eigen values
+    
+
+    const H5std_string FILE_NAME(model_path);
+    const H5std_string MEAN_DATASET_NAME("/model/mean");
+    const H5std_string PCA_BASIS_DATASET_NAME("/model/pcaBasis");
+    //const int          DIM0 = 31425; // dataset dimensions
+    const int          DIM0 = referenceMesh.points.size()*3; // dataset dimensions
+    //const int          DIM1 = 79;
+    //const int          DIM1 = 299;
+    const int          DIM1 = 629;
+    const int RANK = 2;
+
+    std::cout << "DIM0: " << DIM0 << "\n";
 
     Eigen::VectorXf meanVector(DIM0);
 
@@ -649,7 +794,9 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
 }
 
 Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
-    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
+    std::cout << "projection.size(): " << projection.size() << "\n";
     //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
 
     // for (int i = 0; i < this->pcaBasis.block(0,0,31425,10).rows(); i++) {
@@ -665,7 +812,10 @@ Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
 
     //std::cout << "projection.sum(): " << projection.sum() << "\n";
     
+    std::cout << "before mean vector\n";
     Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);
+    std::cout << "after meanVector\n";
+    std::cout << "meanVector.size(): " << meanVector.size() << "\n";
     //std::cout << "meanVector done\n";
     //std::cout << "meanVector.size(): " << meanVector.size() << ", " << "projection.size(): " << projection.size() << "\n";
     Eigen::VectorXf sample = meanVector + projection;
@@ -673,13 +823,23 @@ Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
     Mesh sampledMesh = vectorXfToMesh_w_reference(sample);
     sampledMesh.textureCoords = referenceMesh.textureCoords;
     sampledMesh.pointIds = referenceMesh.pointIds;
+    
+    // added for smpl
+    sampledMesh.triangleCells = referenceMesh.triangleCells;
+    // end added 
+
+    std::cout << "before computeNormals\n";
     sampledMesh.computeNormals();
+    std::cout << "after computeNormals\n";
     return sampledMesh;
 }
 
+
+
 Mesh BuildSSM::instanceNoNormals(Eigen::VectorXf coefficients) {
-    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
-    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
+    ////Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
 
 
     Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);

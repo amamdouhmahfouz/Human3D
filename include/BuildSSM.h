@@ -42,19 +42,23 @@ private:
 public:
     std::vector<Model> models;
     PCA* pcaModel;
+    Mesh referenceObj;
     
 
     // std::vector<std::vector<glm::vec3> > deformationFields;
     std::vector<std::vector<DeformationField> > deformationFields;
     void createModelsFromFiles();
     // directory contains: 01.obj, 01.json, 02.obj, 02.json, ...
-    BuildSSM(const std::string& dir_path);
     BuildSSM();
+    BuildSSM(const std::string& dir_path);
+    BuildSSM(const std::string& dir_path, const std::string& reference_obj);
     ~BuildSSM();
 
     // average height and weight
     void createStatsFromMetadata();
     void createDeformationFields();
+
+    void createModelsSmpl();
     
     Model createMeanModel();
     void computeGPA();
@@ -78,6 +82,9 @@ public:
     void loadPCAModel(const std::string& model_path, const std::string& reference_obj_path);
     Mesh instance(Eigen::VectorXf coefficients); // used when loading a model
     Mesh instanceNoNormals(Eigen::VectorXf coefficients); // used when loading a model
+
+    Mesh sampleSSMSmpl(Eigen::VectorXf coefficients);
+    void loadPCAModelSmpl(const std::string& model_path, const std::string& reference_obj_path);
 };
 
 

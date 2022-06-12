@@ -139,14 +139,15 @@ target_link_libraries(buildSSM_test
 
 # add_executable(hdf5_test hdf5_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 # target_link_libraries(hdf5_test HDF5::HDF5 glfw Eigen3::Eigen)
-add_executable(hdf5_test hdf5_test.cpp)
-target_link_libraries(hdf5_test HDF5::HDF5)
 
-add_executable(hdf5C_test hdf5C_test.cpp)
-target_link_libraries(hdf5C_test HDF5::HDF5)
+# add_executable(hdf5_test hdf5_test.cpp)
+# target_link_libraries(hdf5_test HDF5::HDF5)
 
-add_executable(hdf5Read_test hdf5Read_test.cpp)
-target_link_libraries(hdf5Read_test HDF5::HDF5)
+# add_executable(hdf5C_test hdf5C_test.cpp)
+# target_link_libraries(hdf5C_test HDF5::HDF5)
+
+# add_executable(hdf5Read_test hdf5Read_test.cpp)
+# target_link_libraries(hdf5Read_test HDF5::HDF5)
 
 add_executable(readPCAModel_test readPCAModel_test.cpp ${ALL_SOURCES})
 target_link_libraries(readPCAModel_test HDF5::HDF5 Eigen3::Eigen)
@@ -159,3 +160,15 @@ target_link_libraries(proposals_test HDF5::HDF5 Eigen3::Eigen)
 
 add_executable(metropolis_test metropolis_test.cpp  ${ALL_SOURCES} )
 target_link_libraries(metropolis_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(landmarksSmpl_test landmarksSmpl_test.cpp ${ALL_SOURCES})
+target_link_libraries(landmarksSmpl_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(buildSSMSmpl_test buildSSMSmpl_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
+target_link_libraries(buildSSMSmpl_test 
+    PRIVATE HDF5::HDF5 
+    #PRIVATE glfw 
+    PRIVATE Eigen3::Eigen )
+
+    add_executable(readPCAModelSmpl_test readPCAModelSmpl_test.cpp ${ALL_SOURCES})
+    target_link_libraries(readPCAModelSmpl_test HDF5::HDF5 Eigen3::Eigen)

@@ -161,6 +161,7 @@ void PCA::computeEig() {
     Eigen::MatrixXf pcaBasis = data.transpose() * matV * singSqrtInv.asDiagonal();
     pcaBasis /= sqrt(data.rows() - 1.0);
     eigenVectors = pcaBasis;
+    eigenValues = singularValues;
     std::cout << "pcaBasis.rows(): " << pcaBasis.rows() << "\n";
     std::cout << "pcaBasis.cols(): " << pcaBasis.cols() << "\n";
     for (int i = 0; i < 15; i++) {
@@ -184,10 +185,12 @@ Eigen::VectorXf PCA::getProjection(Eigen::VectorXf vec) const {
     // return eigenVectors.transpose() * vec;
     std::cout << "vec.rows(): " << vec.rows() << "\n";
     std::cout << "vec.cols(): " << vec.cols() << "\n";
-    std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,10).cols() << "\n";
-    //std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,299).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,299).cols() << "\n";
-    return eigenVectors.block(0,0,31425,10) * vec;
-    //return eigenVectors.block(0,0,31425,299) * vec;
+    ////std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,299).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,299).cols() << "\n";
+    //std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,10).cols() << "\n";
+    std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,6890*3,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,6890*3,10).cols() << "\n";
+    ////return eigenVectors.block(0,0,31425,299) * vec;
+    //return eigenVectors.block(0,0,31425,10) * vec;
+    return eigenVectors.block(0,0,6890*3,10) * vec;
 }
 
 Eigen::VectorXf PCA::getMean() const {

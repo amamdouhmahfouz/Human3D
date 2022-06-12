@@ -27,7 +27,7 @@ int main() {
     std::cout << "idsIndicesJson.size(): " << idsIndicesJson.size() << "\n";
     std::cout << "[Model] included successfully\n";
 
-    Model model("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledFromSavedModel.obj");
+    Model model("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshTestSampledFromSavedModel_300.obj");
     model.computeLandmarksPositions(idsIndicesJson);
 
     float height = model.computeModelHeight();

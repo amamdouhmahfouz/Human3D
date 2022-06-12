@@ -65,8 +65,8 @@ void Alignment::ICP(Model& from, Model to) {
         toMat(i, 2) = to.mesh.points[i].position.z;
     }
 
-    for (int i = 0; i < 1; i++) {
-        std::cout << "................. iteration #" << i << " .....................\n";
+    for (int j = 0; j < 1; j++) {
+        std::cout << "................. iteration #" << j << " .....................\n";
         Eigen::MatrixXf fromMat(from.mesh.points.size(), 3);
         
 
