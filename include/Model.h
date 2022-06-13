@@ -47,8 +47,10 @@ public:
     float computeModelHeight();
     float computeArmSpan();
     float computeShoulderWidth();
+    float computeParameter(const std::string& start, const std::string& end);
 
-    BodyParameters computeBodyParameters();
+    BodyParameters computeBodyParameters(); // absolute params
+    BodyParameters computeBodyRatios(); // with respect to height
 };
 
 

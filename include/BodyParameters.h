@@ -14,6 +14,14 @@ public:
     float stomachWidth;
     float legHeight;
     float height;
+
+    // ratios
+    float armSpanRatio;
+    float shoulderWidthRatio;
+    float chestWidthRatio;
+    float thighWidthRatio;
+    float stomachWidthRatio;
+    float legHeightRatio;
 };
 
 #endif // BODYPARAMETERS_H

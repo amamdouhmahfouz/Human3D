@@ -44,7 +44,7 @@ void MetropolisHastings::run(unsigned int iterations) {
         meshInstance.scale(1000.0);
         Model modelInstance(meshInstance, idsIndicesJson);
         
-        BodyParameters calculatedBodyParams = modelInstance.computeBodyParameters();
+        BodyParameters calculatedBodyParams = modelInstance.computeBodyRatios();//modelInstance.computeBodyParameters();
         
         // std::cout << "calculatedBodyParams: \n";
         // std::cout << "calculatedBodyParams.armSpan; " << calculatedBodyParams.armSpan << "\n";
@@ -74,7 +74,7 @@ void MetropolisHastings::run(unsigned int iterations) {
         // 4.
         Model proposedModel(proposedMesh, idsIndicesJson);
         // 5.
-        BodyParameters proposedBodyParameters = proposedModel.computeBodyParameters();
+        BodyParameters proposedBodyParameters = proposedModel.computeBodyRatios();//proposedModel.computeBodyParameters();
         std::cout << "proposedBodyParameters: \n";
         std::cout << "proposedBodyParameters.armSpan; " << proposedBodyParameters.armSpan << "\n";
         std::cout << "proposedBodyParameters.shoulderWidth; " << proposedBodyParameters.shoulderWidth << "\n";
@@ -124,11 +124,18 @@ void MetropolisHastings::run(unsigned int iterations) {
          finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
          finalMesh.normals, finalMesh.textureCoords);
     Model finalModel(finalMesh, idsIndicesJson);
-    BodyParameters finalBodyParameters = finalModel.computeBodyParameters();
+    BodyParameters finalBodyParameters = finalModel.computeBodyRatios();//finalModel.computeBodyParameters();
     std::cout << "finalBodyParameters: \n";
     std::cout << "finalBodyParameters.armSpan; " << finalBodyParameters.armSpan << "\n";
     std::cout << "finalBodyParameters.shoulderWidth; " << finalBodyParameters.shoulderWidth << "\n";
     std::cout << "finalBodyParameters.height; " << finalBodyParameters.height << "\n";
+
+    std::cout << "finalBodyParameters.armSpanRatio; " << finalBodyParameters.armSpanRatio << "\n";
+    std::cout << "finalBodyParameters.shoulderWidthRatio; " << finalBodyParameters.shoulderWidthRatio << "\n";
+    std::cout << "finalBodyParameters.stomachWidthRatio; " << finalBodyParameters.stomachWidthRatio << "\n";
+    std::cout << "finalBodyParameters.chestWidthRatio; " << finalBodyParameters.chestWidthRatio << "\n";
+    std::cout << "finalBodyParameters.legHeightRatio; " << finalBodyParameters.legHeightRatio << "\n";
+    
 
 
 

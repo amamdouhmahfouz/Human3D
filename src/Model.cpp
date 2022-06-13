@@ -148,6 +148,20 @@ float Model::computeShoulderWidth() {
     return shoulderWidth;
 }
 
+float Model::computeParameter(const std::string& start, const std::string& end) {
+    std::map<std::string, Point<glm::vec3>>::iterator it;
+    
+    it = idsPoints.find(start);
+    glm::vec3 first = it->second.position;
+
+    it = idsPoints.find(end);
+    glm::vec3 second = it->second.position;
+
+    float param = sqrt(pow(first.x - second.x, 2) + pow(first.y - second.y, 2) + pow(first.z - second.z, 2));
+    
+    return param;
+}
+
 BodyParameters Model::computeBodyParameters() {
     BodyParameters params;
 
@@ -159,4 +173,24 @@ BodyParameters Model::computeBodyParameters() {
     //std::cout << "****** params.height: " << params.height << "\n";
 
     return params;
+}
+
+BodyParameters Model::computeBodyRatios() {
+    BodyParameters params;
+
+    params.height = computeModelHeight();
+    params.shoulderWidth = computeShoulderWidth();
+    params.armSpan = computeArmSpan();
+    params.stomachWidth = computeParameter("belly.right", "belly.left");
+    params.chestWidth = computeParameter("chest.right", "chest.left");
+    params.legHeight = computeParameter("waist.right", "foot.right.bottom.center");
+    
+    params.shoulderWidthRatio = params.shoulderWidth / params.height;
+    params.armSpanRatio = params.armSpan / params.height;
+    params.stomachWidthRatio = params.stomachWidth / params.height;
+    params.chestWidthRatio = params.chestWidth / params.height;
+    params.legHeightRatio = params.legHeight / params.height;
+
+    return params;
+
 }
