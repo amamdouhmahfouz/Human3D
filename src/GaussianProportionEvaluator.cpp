@@ -29,10 +29,13 @@ float GaussianProportionEvaluator::evaluateLogProportions(float standardDeviatio
     float valueChestWidth = denom - 0.5 * diffSquaredChestWidth / (standardDeviation * standardDeviation);
 
     float diffLegHeight =  (observedParams.legHeightRatio - calculatedParams.legHeightRatio) * (observedParams.legHeightRatio - calculatedParams.legHeightRatio);
-    float valueLegWidth = denom - 0.5 * diffLegHeight / (standardDeviation * standardDeviation);
+    float valueLegHeight = denom - 0.5 * diffLegHeight / (standardDeviation * standardDeviation);
+
+    // float diffHeight =  (observedParams.heightRatio - calculatedParams.heightRatio) * (observedParams.heightRatio - calculatedParams.heightRatio);
+    // float valueHeight = denom - 0.5 * diffHeight / (standardDeviation * standardDeviation);
 
 
-    return valueArmSpan + valueShoulderWidth + valueStomachWidth + valueChestWidth + valueLegWidth;
+    return valueArmSpan + valueShoulderWidth + valueStomachWidth + valueChestWidth + valueLegHeight;
 
 }
 

@@ -51,6 +51,8 @@ public:
 
     BodyParameters computeBodyParameters(); // absolute params
     BodyParameters computeBodyRatios(); // with respect to height
+    void saveLandmarks(nlohmann::json idsIndicesJson, const std::string& outputPath);
+    void saveMesh(const std::string& meshPath);
 };
 
 

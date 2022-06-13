@@ -26,10 +26,18 @@ int main() {
     observedParams.chestWidthRatio = 97.0/492.0; // 0.19715
     observedParams.legHeightRatio = 240.0/492.0; // 0.4878
 
+    // float actualHeight = 168.0;
+    // observedParams.height = 492.0 / actualHeight;
+    // observedParams.armSpanRatio = 497.0 / actualHeight; // 1.01
+    // observedParams.shoulderWidthRatio = 101.0 / actualHeight; // 0.205
+    // observedParams.thighWidthRatio = 41.0 / actualHeight; // 0.08333
+    // observedParams.stomachWidthRatio = 75.0 / actualHeight; // 0.152439  
+    // observedParams.chestWidthRatio = 97.0 / actualHeight; // 0.19715
+    // observedParams.legHeightRatio = 240.0 / actualHeight; // 0.4878
 
     Eigen::VectorXf coefficients(10);
     coefficients.setZero();
-    MetropolisHastings metropolis(&ssm, coefficients, observedParams, 0.35, 0.2, 1.0);
+    MetropolisHastings metropolis(&ssm, coefficients, observedParams, 0.34, 0.1, 1.0);
 
     metropolis.run(5000);
 

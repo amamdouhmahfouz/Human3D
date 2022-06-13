@@ -35,6 +35,13 @@ void MetropolisHastings::run(unsigned int iterations) {
     int countRejected = 0;
     nlohmann::json idsIndicesJson = ssm->getIdsIndicesJson();
 
+    // uniform distribution
+    // std::random_device rand_dev;
+    // unsigned seed = 0;
+    // std::mt19937 generator(seed);
+    // std::uniform_real_distribution<> uniform_dist(0, 1);
+    //srand( (unsigned)time( NULL ) );
+
     for (int i = 0; i < iterations; i++) {
         std::cout << "......... iteration #" << i << " ............\n";
         // 1.
@@ -94,8 +101,10 @@ void MetropolisHastings::run(unsigned int iterations) {
         
         srand( (unsigned)time( NULL ) );
         float u = (float) rand()/RAND_MAX;
-
+        //float u = uniform_dist(generator);
         
+        std::cout << "u: " << u << "\n";
+        std::cout << "exp(alpha): " << exp(alpha) << "\n";
         if (alpha > 0 || u < exp(alpha)) {
             // accept
             std::cout << "accepted\n";
@@ -120,10 +129,13 @@ void MetropolisHastings::run(unsigned int iterations) {
     std::cout << "*********** countRejected: " << countRejected << "\n";
     Mesh finalMesh = ssm->instance(bestCoef);
     finalMesh.scale(1000.0);
-    ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh.obj",
-         finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
-         finalMesh.normals, finalMesh.textureCoords);
+    // ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3.obj",
+    //      finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
+    //      finalMesh.normals, finalMesh.textureCoords);
     Model finalModel(finalMesh, idsIndicesJson);
+    finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3.obj");
+    finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3_landmarks.json");
+
     BodyParameters finalBodyParameters = finalModel.computeBodyRatios();//finalModel.computeBodyParameters();
     std::cout << "finalBodyParameters: \n";
     std::cout << "finalBodyParameters.armSpan; " << finalBodyParameters.armSpan << "\n";
@@ -135,6 +147,7 @@ void MetropolisHastings::run(unsigned int iterations) {
     std::cout << "finalBodyParameters.stomachWidthRatio; " << finalBodyParameters.stomachWidthRatio << "\n";
     std::cout << "finalBodyParameters.chestWidthRatio; " << finalBodyParameters.chestWidthRatio << "\n";
     std::cout << "finalBodyParameters.legHeightRatio; " << finalBodyParameters.legHeightRatio << "\n";
+    //std::cout << "finalBodyParameters.heightRatio; " << finalBodyParameters.heightRatio << "\n";
     
 
 

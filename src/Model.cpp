@@ -191,6 +191,40 @@ BodyParameters Model::computeBodyRatios() {
     params.chestWidthRatio = params.chestWidth / params.height;
     params.legHeightRatio = params.legHeight / params.height;
 
+    // float actualHeight = 168.0;
+    // params.heightRatio = params.height / actualHeight;
+    // params.shoulderWidthRatio = params.shoulderWidth / actualHeight;
+    // params.armSpanRatio = params.armSpan / actualHeight;
+    // params.stomachWidthRatio = params.stomachWidth / actualHeight;
+    // params.chestWidthRatio = params.chestWidth / actualHeight;
+    // params.legHeightRatio = params.legHeight / actualHeight;
+
     return params;
 
+}
+
+void Model::saveLandmarks(nlohmann::json idsIndicesJson, const std::string& outputPath) {
+    nlohmann::json newLmsJson;
+    int k = 0;
+    for (nlohmann::json::iterator it = idsIndicesJson.begin(); it != idsIndicesJson.end(); ++it) {
+        // get id and index from idsIndicesJson
+        std::string id = (*it)["id"];
+        unsigned int index = (*it)["index"];
+        //std::cout << "index: " << index << "\n";
+        Point<glm::vec3> point = this->mesh.getPointAtIndex(index);
+
+        // save in newLmsJson
+        newLmsJson[k]["id"] = id;
+        newLmsJson[k]["coordinates"] = {point.position.x, point.position.y, point.position.z};
+        k++;
+    }
+    std::ofstream writeJson(outputPath);
+    writeJson << std::setw(4) << newLmsJson << std::endl;
+    std::cout << "[Model::saveLandmarks]::saved landmarks from model successfully\n";
+}
+
+void Model::saveMesh(const std::string& meshPath) {
+    ObjLoader::saveObj(meshPath,
+         this->mesh.points, this->mesh.pointIds, this->mesh.triangleCells,
+         this->mesh.normals, this->mesh.textureCoords);
 }

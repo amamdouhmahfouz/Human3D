@@ -22,6 +22,7 @@ public:
     float thighWidthRatio;
     float stomachWidthRatio;
     float legHeightRatio;
+    float heightRatio;
 };
 
 #endif // BODYPARAMETERS_H
