@@ -170,5 +170,17 @@ target_link_libraries(buildSSMSmpl_test
     #PRIVATE glfw 
     PRIVATE Eigen3::Eigen )
 
-    add_executable(readPCAModelSmpl_test readPCAModelSmpl_test.cpp ${ALL_SOURCES})
-    target_link_libraries(readPCAModelSmpl_test HDF5::HDF5 Eigen3::Eigen)
+add_executable(readPCAModelSmpl_test readPCAModelSmpl_test.cpp ${ALL_SOURCES})
+target_link_libraries(readPCAModelSmpl_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(buildSSMSmplx_test buildSSMSmplx_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
+target_link_libraries(buildSSMSmplx_test 
+    PRIVATE HDF5::HDF5 
+    #PRIVATE glfw 
+    PRIVATE Eigen3::Eigen )
+
+add_executable(readPCASmplx_test readPCASmplx_test.cpp ${ALL_SOURCES})
+target_link_libraries(readPCASmplx_test HDF5::HDF5 Eigen3::Eigen)
+
+add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES})
+target_link_libraries(landmarks_test HDF5::HDF5 Eigen3::Eigen)

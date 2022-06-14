@@ -72,7 +72,7 @@ int main() {
     }
 
     // save the output json file
-    std::ofstream writeJson("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index.json");
+    std::ofstream writeJson("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/ids_index_v2.json");
     writeJson << std::setw(4) << ids_index_json << std::endl;
 
     std::cout << "done landmarks test.\n";

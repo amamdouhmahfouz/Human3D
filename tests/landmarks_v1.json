@@ -364,5 +364,41 @@
         "coordinates": [
             0.88841, 0.035314, -0.081711
         ]
+    },
+    {
+        "id": "thigh.right.inner",
+        "coordinates": [
+            -0.002663, -0.54935, 0.027205
+        ]
+    },
+    {
+        "id": "thigh.right.outer",
+        "coordinates": [
+            -0.17659, -0.53845, -0.010095
+        ]
+    },
+    {
+        "id": "thigh.left.inner",
+        "coordinates": [
+            0.001825, -0.54892, 0.027204
+        ]
+    },
+    {
+        "id": "thigh.left.outer",
+        "coordinates": [
+            0.17576, -0.53822, -0.010631
+        ]
+    },
+    {
+        "id": "neck.right.upper",
+        "coordinates": [
+            -0.061144, 0.22352, -0.000588
+        ]
+    },
+    {
+        "id": "neck.right.lower",
+        "coordinates": [
+            -0.058609, 0.15782, 0.00119
+        ]
     }
 ]
