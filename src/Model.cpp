@@ -184,12 +184,21 @@ BodyParameters Model::computeBodyRatios() {
     params.stomachWidth = computeParameter("belly.right", "belly.left");
     params.chestWidth = computeParameter("chest.right", "chest.left");
     params.legHeight = computeParameter("waist.right", "foot.right.bottom.center");
-    
+    //params.neckLength = computeParameter("chin", "neckstart.front.center");
+    params.neckLength = computeParameter("neck.right.upper", "neck.right.lower");
+    params.headWidth = computeParameter("head.right", "head.left");
+    params.headIntoLength = computeParameter("nosetip", "head.back");
+    params.thighRighWidth = computeParameter("thigh.right.outer", "thigh.right.inner");
+
     params.shoulderWidthRatio = params.shoulderWidth / params.height;
     params.armSpanRatio = params.armSpan / params.height;
     params.stomachWidthRatio = params.stomachWidth / params.height;
     params.chestWidthRatio = params.chestWidth / params.height;
     params.legHeightRatio = params.legHeight / params.height;
+    params.neckLengthRatio = params.neckLength / params.height;
+    params.headWidthRatio = params.headWidth / params.height;
+    params.headIntoLengthRatio = params.headIntoLength / params.height;
+    params.thighRightWidthRatio = params.thighRighWidth / params.height;
 
     // float actualHeight = 168.0;
     // params.heightRatio = params.height / actualHeight;

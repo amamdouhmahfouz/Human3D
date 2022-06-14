@@ -36,14 +36,14 @@ void MetropolisHastings::run(unsigned int iterations) {
     nlohmann::json idsIndicesJson = ssm->getIdsIndicesJson();
 
     // uniform distribution
-    // std::random_device rand_dev;
-    // unsigned seed = 0;
-    // std::mt19937 generator(seed);
-    // std::uniform_real_distribution<> uniform_dist(0, 1);
+    std::random_device rand_dev;
+    unsigned seed = 0;
+    std::mt19937 generator(seed);
+    std::uniform_real_distribution<> uniform_dist(0, 1);
     //srand( (unsigned)time( NULL ) );
 
     for (int i = 0; i < iterations; i++) {
-        std::cout << "......... iteration #" << i << " ............\n";
+        std::cout << "......... iteration #: " << i << " / "<< iterations<<" ............\n";
         // 1.
         Eigen::VectorXf proposalShapeCoeff = proposalDistribution->propose(shapeCoefficients);
         // 2.
@@ -53,16 +53,13 @@ void MetropolisHastings::run(unsigned int iterations) {
         
         BodyParameters calculatedBodyParams = modelInstance.computeBodyRatios();//modelInstance.computeBodyParameters();
         
-        // std::cout << "calculatedBodyParams: \n";
-        // std::cout << "calculatedBodyParams.armSpan; " << calculatedBodyParams.armSpan << "\n";
-        // std::cout << "calculatedBodyParams.shoulderWidth; " << calculatedBodyParams.shoulderWidth << "\n";
-        // std::cout << "calculatedBodyParams.height; " << calculatedBodyParams.height << "\n";
-
 
         float likelihood = GaussianProportionEvaluator::evaluateLogProportions(likelihoodStddev, observedBodyParams, calculatedBodyParams);
         float prior = GaussianPrior::evaluateLogPrior(0.0, priorStddev, shapeCoefficients);
         float posterior = likelihood + prior;
-        //std::cout << "posterior: " << posterior << "\n";
+        std::cout << "likelihood: " << likelihood << "\n";
+        std::cout << "prior: " << prior << "\n";
+        std::cout << "posterior: " << posterior << "\n";
 
         //std::cout << "proposalShapeCoeff: " << proposalShapeCoeff << "\n";
         // 3. 
@@ -75,37 +72,39 @@ void MetropolisHastings::run(unsigned int iterations) {
                 proposedMesh.points, proposedMesh.pointIds, proposedMesh.triangleCells,
                 proposedMesh.normals, proposedMesh.textureCoords);
         }
-        // ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/meshFromMetropolis.obj",
-        //  proposedMesh.points, proposedMesh.pointIds, proposedMesh.triangleCells,
-        //  proposedMesh.normals, proposedMesh.textureCoords);
+
         // 4.
         Model proposedModel(proposedMesh, idsIndicesJson);
         // 5.
         BodyParameters proposedBodyParameters = proposedModel.computeBodyRatios();//proposedModel.computeBodyParameters();
-        std::cout << "proposedBodyParameters: \n";
-        std::cout << "proposedBodyParameters.armSpan; " << proposedBodyParameters.armSpan << "\n";
-        std::cout << "proposedBodyParameters.shoulderWidth; " << proposedBodyParameters.shoulderWidth << "\n";
-        std::cout << "proposedBodyParameters.height; " << proposedBodyParameters.height << "\n";
 
         // 6. 
         float likelihoodProposed = GaussianProportionEvaluator::evaluateLogProportions(likelihoodStddev, observedBodyParams, proposedBodyParameters);
         float priorProposed = GaussianPrior::evaluateLogPrior(0.0, priorStddev, proposalShapeCoeff);
         float posteriorProposed = likelihoodProposed + priorProposed;
+        std::cout << "likelihoodProposed: " << likelihoodProposed << "\n";
+        std::cout << "priorProposed: " << priorProposed << "\n";
+        std::cout << "posteriorProposed: " << posteriorProposed << "\n";
         // 7.
         float transitionProbRatio = proposalDistribution->evaluateLogTransitionProbability(shapeCoefficients, proposalShapeCoeff);
 
         ///std::cout << "transitionProbRatio: " << transitionProbRatio << "\n";
 
-        float alpha = posteriorProposed - posterior - transitionProbRatio;
+        float alpha = posteriorProposed - posterior - transitionProbRatio; //min(0, ...) and do not check if alpha > 0 then
+        //alpha = std::min(0.0f, alpha);
+        
         //std::cout << "alpha: " << alpha << "\n";
         
-        srand( (unsigned)time( NULL ) );
-        float u = (float) rand()/RAND_MAX;
-        //float u = uniform_dist(generator);
+        //srand( (unsigned)time( NULL ) );
+        //float u = (float) rand()/RAND_MAX;
+        float u = uniform_dist(generator);
         
         std::cout << "u: " << u << "\n";
-        std::cout << "exp(alpha): " << exp(alpha) << "\n";
-        if (alpha > 0 || u < exp(alpha)) {
+        std::cout << "log(u): " << log(u) << "\n";
+        //std::cout << "exp(alpha): " << exp(alpha) << "\n";
+        std::cout << "transitionProbRatio: " << transitionProbRatio << "\n";
+        if (alpha > 0 || exp(alpha) > u) {
+        //if (alpha > log(u)) {
             // accept
             std::cout << "accepted\n";
             std::cout << "alpha: " << alpha << "\n";
@@ -116,6 +115,8 @@ void MetropolisHastings::run(unsigned int iterations) {
                 bestAlpha = alpha;
                 bestCoef = shapeCoefficients;
             //}
+          //  int ii;
+        //std::cin >> ii;
         } else {
             std::cout << "rejected\n";
             std::cout << "alpha: " << alpha << "\n";
@@ -123,6 +124,8 @@ void MetropolisHastings::run(unsigned int iterations) {
             //shapeCoefficients = proposalShapeCoeff;
             //bestCoef = shapeCoefficients;
         }
+
+        
     }
 
     std::cout << "\n*********** countAccepted: " << countAccepted << "\n";
@@ -133,8 +136,8 @@ void MetropolisHastings::run(unsigned int iterations) {
     //      finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
     //      finalMesh.normals, finalMesh.textureCoords);
     Model finalModel(finalMesh, idsIndicesJson);
-    finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3.obj");
-    finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3_landmarks.json");
+    finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6.obj");
+    finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6_landmarks.json");
 
     BodyParameters finalBodyParameters = finalModel.computeBodyRatios();//finalModel.computeBodyParameters();
     std::cout << "finalBodyParameters: \n";
@@ -143,10 +146,14 @@ void MetropolisHastings::run(unsigned int iterations) {
     std::cout << "finalBodyParameters.height; " << finalBodyParameters.height << "\n";
 
     std::cout << "finalBodyParameters.armSpanRatio; " << finalBodyParameters.armSpanRatio << "\n";
-    std::cout << "finalBodyParameters.shoulderWidthRatio; " << finalBodyParameters.shoulderWidthRatio << "\n";
+    //std::cout << "finalBodyParameters.shoulderWidthRatio; " << finalBodyParameters.shoulderWidthRatio << "\n";
     std::cout << "finalBodyParameters.stomachWidthRatio; " << finalBodyParameters.stomachWidthRatio << "\n";
     std::cout << "finalBodyParameters.chestWidthRatio; " << finalBodyParameters.chestWidthRatio << "\n";
     std::cout << "finalBodyParameters.legHeightRatio; " << finalBodyParameters.legHeightRatio << "\n";
+    std::cout << "finalBodyParameters.neckLengthRatio; " << finalBodyParameters.neckLengthRatio << "\n";
+    std::cout << "finalBodyParameters.headWidthRatio; " << finalBodyParameters.headWidthRatio << "\n";
+    std::cout << "finalBodyParameters.thighRightWidthRatio; " << finalBodyParameters.thighRightWidthRatio << "\n";
+   //std::cout << "finalBodyParameters.headIntoLengthRatio; " << finalBodyParameters.headIntoLengthRatio << "\n";
     //std::cout << "finalBodyParameters.heightRatio; " << finalBodyParameters.heightRatio << "\n";
     
 

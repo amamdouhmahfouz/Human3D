@@ -425,8 +425,8 @@ void BuildSSM::savePCAModel(const std::string& model_path) {
     Eigen::VectorXf eigenValues = pcaModel->getEigenValues();
     std::cout << "created eigenValues\n";
 
-    //const int DIM_MEAN = 3*10475;
-    const int DIM_MEAN = 3*6890;
+    const int DIM_MEAN = 3*10475;
+    //const int DIM_MEAN = 3*6890;
     const int DIM_NOISE_VARIANCE = 1;
     //const int rowsPCA = 31425;
     const int rowsPCA = models[0].mesh.points.size()*3;
@@ -794,8 +794,8 @@ Mesh BuildSSM::vectorXfToMesh_w_reference(Eigen::VectorXf vec) {
 }
 
 Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
-    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
-    Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,7) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
     std::cout << "projection.size(): " << projection.size() << "\n";
     //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
 
@@ -838,8 +838,8 @@ Mesh BuildSSM::instance(Eigen::VectorXf coefficients) {
 
 Mesh BuildSSM::instanceNoNormals(Eigen::VectorXf coefficients) {
     ////Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,299) * coefficients;
-    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,10) * coefficients;
-    Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
+    Eigen::VectorXf projection = this->pcaBasis.block(0,0,31425,7) * coefficients;
+    //Eigen::VectorXf projection = this->pcaBasis.block(0,0,6890*3,10) * coefficients;
 
 
     Eigen::VectorXf meanVector = MeshToVectorXf(meanMesh);

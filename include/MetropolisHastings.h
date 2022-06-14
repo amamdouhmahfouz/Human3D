@@ -6,6 +6,7 @@
 #include <json/json.hpp>
 #include <iostream>
 #include <time.h>
+#include <algorithm>
 #include "BuildSSM.h"
 #include "BodyParameters.h"
 #include "GaussianPrior.h"

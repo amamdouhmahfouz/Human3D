@@ -167,6 +167,18 @@ void PCA::computeEig() {
     for (int i = 0; i < 15; i++) {
         std::cout << "pcaVariance #"<<i<<": " << singularValues[i] << "\n";
     }
+    std::cout << "accuracy first 10 columns: " << eigenValues.head(10).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 20 columns: " << eigenValues.head(20).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 30 columns: " << eigenValues.head(30).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 50 columns: " << eigenValues.head(50).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 100 columns: " << eigenValues.head(100).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 150 columns: " << eigenValues.head(150).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 200 columns: " << eigenValues.head(200).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 250 columns: " << eigenValues.head(250).sum() / eigenValues.sum() * 1.0 << std::endl;
+    std::cout << "accuracy first 300 columns: " << eigenValues.head(300).sum() / eigenValues.sum() * 1.0 << std::endl;
+    //std::cout << "Press enter to continue:\n";
+    //int ii;
+    //std::cin >> ii;
     std::cout << "------------------ finished svdNew ---------------------\n";
 
 }
@@ -186,11 +198,11 @@ Eigen::VectorXf PCA::getProjection(Eigen::VectorXf vec) const {
     std::cout << "vec.rows(): " << vec.rows() << "\n";
     std::cout << "vec.cols(): " << vec.cols() << "\n";
     ////std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,299).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,299).cols() << "\n";
-    //std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,10).cols() << "\n";
-    std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,6890*3,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,6890*3,10).cols() << "\n";
+    std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,31425,7).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,31425,7).cols() << "\n";
+    //std::cout << "eigenVectors.rows(): " << eigenVectors.block(0,0,6890*3,10).rows() << ", eigenVectors.cols(): " << eigenVectors.block(0,0,6890*3,10).cols() << "\n";
     ////return eigenVectors.block(0,0,31425,299) * vec;
-    //return eigenVectors.block(0,0,31425,10) * vec;
-    return eigenVectors.block(0,0,6890*3,10) * vec;
+    return eigenVectors.block(0,0,31425,7) * vec;
+    //return eigenVectors.block(0,0,6890*3,10) * vec;
 }
 
 Eigen::VectorXf PCA::getMean() const {
