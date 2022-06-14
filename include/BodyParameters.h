@@ -14,6 +14,10 @@ public:
     float stomachWidth;
     float legHeight;
     float height;
+    float neckLength;
+    float headWidth;
+    float headIntoLength;
+    float thighRighWidth;
 
     // ratios
     float armSpanRatio;
@@ -23,6 +27,10 @@ public:
     float stomachWidthRatio;
     float legHeightRatio;
     float heightRatio;
+    float neckLengthRatio;
+    float headWidthRatio;
+    float headIntoLengthRatio;
+    float thighRightWidthRatio;
 };
 
 #endif // BODYPARAMETERS_H

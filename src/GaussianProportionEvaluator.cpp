@@ -19,9 +19,7 @@ float GaussianProportionEvaluator::evaluateLogProportions(float standardDeviatio
     float diffSquaredArmSpan =  (observedParams.armSpanRatio - calculatedParams.armSpanRatio) * (observedParams.armSpanRatio - calculatedParams.armSpanRatio);
     float valueArmSpan = denom - 0.5 * diffSquaredArmSpan / (standardDeviation * standardDeviation);
 
-    float diffSquaredShoulderWidth =  (observedParams.shoulderWidthRatio - calculatedParams.shoulderWidthRatio) * (observedParams.shoulderWidthRatio - calculatedParams.shoulderWidthRatio);
-    float valueShoulderWidth = denom - 0.5 * diffSquaredShoulderWidth / (standardDeviation * standardDeviation);
-
+  
     float diffSquaredStomachWidth =  (observedParams.stomachWidthRatio - calculatedParams.stomachWidthRatio) * (observedParams.stomachWidthRatio - calculatedParams.stomachWidthRatio);
     float valueStomachWidth = denom - 0.5 * diffSquaredStomachWidth / (standardDeviation * standardDeviation);
 
@@ -31,11 +29,24 @@ float GaussianProportionEvaluator::evaluateLogProportions(float standardDeviatio
     float diffLegHeight =  (observedParams.legHeightRatio - calculatedParams.legHeightRatio) * (observedParams.legHeightRatio - calculatedParams.legHeightRatio);
     float valueLegHeight = denom - 0.5 * diffLegHeight / (standardDeviation * standardDeviation);
 
+    float diffNeckHeight =  (observedParams.neckLengthRatio - calculatedParams.neckLengthRatio) * (observedParams.neckLengthRatio - calculatedParams.neckLengthRatio);
+    float valueNeckHeight = denom - 0.5 * diffNeckHeight / (standardDeviation * standardDeviation);
+
+    float diffHeadWidth =  (observedParams.headWidthRatio - calculatedParams.headWidthRatio) * (observedParams.headWidthRatio - calculatedParams.headWidthRatio);
+    float valueHeadWidth = denom - 0.5 * diffHeadWidth / (standardDeviation * standardDeviation);
+
+    float diffHeadInto =  (observedParams.headIntoLengthRatio - calculatedParams.headIntoLengthRatio) * (observedParams.headIntoLengthRatio - calculatedParams.headIntoLengthRatio);
+    float valueHeadInto = 0.0;//denom - 0.5 * diffHeadInto / (standardDeviation * standardDeviation);
+
+    float diffThighRightWidth =  (observedParams.thighRightWidthRatio - calculatedParams.thighRightWidthRatio) * (observedParams.thighRightWidthRatio - calculatedParams.thighRightWidthRatio);
+    float valueThighRightWidth = denom - 0.5 * diffThighRightWidth / (standardDeviation * standardDeviation);
+
     // float diffHeight =  (observedParams.heightRatio - calculatedParams.heightRatio) * (observedParams.heightRatio - calculatedParams.heightRatio);
     // float valueHeight = denom - 0.5 * diffHeight / (standardDeviation * standardDeviation);
 
 
-    return valueArmSpan + valueShoulderWidth + valueStomachWidth + valueChestWidth + valueLegHeight;
-
+    //return valueArmSpan  + valueStomachWidth + valueChestWidth + valueLegHeight + valueNeckHeight + valueHeadWidth + valueHeadInto;
+    return valueArmSpan  + valueStomachWidth + valueChestWidth + valueLegHeight + valueHeadWidth + valueThighRightWidth + valueNeckHeight;
+    //return valueArmSpan + valueStomachWidth + valueChestWidth + valueHeadWidth;
 }
 

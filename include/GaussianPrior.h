@@ -6,6 +6,7 @@
 class GaussianPrior {
 public:
     static float evaluateLogPrior(float mean, float standardDeviation, Eigen::VectorXf coefficients);
+    static float evaluatePrior(float mean, float standardDeviation, Eigen::VectorXf coefficients);
 };
 
 #endif // GAUSSIANPRIOR_H
