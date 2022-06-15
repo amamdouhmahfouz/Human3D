@@ -27,51 +27,23 @@ int main(int argc, char *argv[]) {
     ssm.readIdsIndicesLandmarks(std::string(argv[3]));
     std::cout << "[Fitting]::reading ids_index json successfully\n";
 
-    BodyParameters observedParams;
-
-    // define the ratios in the image
-    // observedParams.height = 492.0;
-    // observedParams.armSpanRatio = 497.0/492.0; // 1.01
-    // observedParams.shoulderWidthRatio = 101.0/492.0; // 0.205
-    // observedParams.thighWidthRatio = 41.0/492.0; // 0.08333
-    // observedParams.stomachWidthRatio = 75.0/492.0; // 0.152439  
-    // observedParams.chestWidthRatio = 97.0/492.0; // 0.19715
-    // observedParams.legHeightRatio = 240.0/492.0; // 0.4878
-    // //observedParams.neckLengthRatio = 26.0/492.0; // 0.046747
-    // observedParams.headWidthRatio = 44.0/492.0; // 0.08943
-    //observedParams.headIntoLengthRatio = 66.0/492.0;
-
-
-    // observedParams.height = 868.0;
-    // observedParams.armSpanRatio = 758.0/868.0; // 0.87327
-    // //observedParams.shoulderWidthRatio = 101.0/868.0; // 0.205
-    // observedParams.thighRightWidthRatio = 83.0/868.0; // 0.0956
-    // observedParams.stomachWidthRatio = 173.0/868.0; // 0.199308  
-    // observedParams.chestWidthRatio = 185.0/868.0; // 0.21313
-    // observedParams.legHeightRatio = 456.0/868.0; // 0.525345
-    // observedParams.headWidthRatio = 82.0/868.0; // 0.0.09447
-
-    observedParams.height = 492.0;
-    observedParams.armSpanRatio = 497.0/492.0; // 0.87327
-    //observedParams.shoulderWidthRatio = 101.0/868.0; // 0.205
-    observedParams.thighRightWidthRatio = 41.0/492.0; // 0.0956
-    observedParams.stomachWidthRatio = 75.0/492.0; // 0.199308  
-    observedParams.chestWidthRatio = 97.0/492.0; // 0.21313
-    observedParams.legHeightRatio = 240.0/492.0; // 0.525345
-    observedParams.headWidthRatio = 44.0/492.0; // 0.0.09447
-    observedParams.neckLengthRatio = 0.030;
-
-
     Eigen::VectorXf coefficients(7);
     coefficients.setZero();
-    //MetropolisHastings metropolis(&ssm, coefficients, observedParams, 0.34, 0.2, 1.0);
-    //MetropolisHastings metropolis(&ssm, coefficients, observedParams, 0.165, 1.0, 1.0); //u(0,1)
-    MetropolisHastings metropolis(&ssm, std::string(argv[4]), coefficients, 0.066f, 0.01f, 1.0f);
-    Model fittedModel = metropolis.run(7000);
+
+    float sdevProposal = 0.066f;
+    float sdevLikelihood = 0.01f;
+    float sdevPrior = 1.0f;
+    int numIterations = 7000;
+
+    MetropolisHastings metropolis(&ssm, std::string(argv[4]), coefficients, sdevProposal, sdevLikelihood, sdevPrior);
+    Model fittedModel = metropolis.run(numIterations);
+    std::cout << "[Fitting]::fitting model done\n";
 
     fittedModel.saveMesh(std::string(argv[5]));
-    fittedModel.saveLandmarks(ssm.getIdsIndicesJson(), std::string(argv[6]));
+    std::cout << "[Fitting]::saved fitted mesh\n";
 
+    fittedModel.saveLandmarks(ssm.getIdsIndicesJson(), std::string(argv[6]));
+    std::cout << "[Fitting]::saved landmarks\n";
 
     std::cout << "[Fitting]::done fitting\n";
     return 0;
