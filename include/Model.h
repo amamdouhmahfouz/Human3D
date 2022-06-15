@@ -8,7 +8,6 @@
 #include <iostream>
 #include <map>
 #include <utility>
-#include "Vertex.h"
 #include "Mesh.h"
 #include "ObjLoader.h"
 #include "BodyParameters.h"

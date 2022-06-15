@@ -3,10 +3,8 @@
 
 #include <vector>
 #include <cmath>
-#include "Vertex.h"
 #include "Point.h"
 #include "TriangleCell.h"
-//#include <glm/glm.hpp>
 #include <glm/gtx/normal.hpp>
 
 class Mesh {

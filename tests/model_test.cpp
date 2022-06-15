@@ -1,16 +1,8 @@
-#include "Vertex.h"
 #include "Model.h"
 #include <iostream> 
 #include <unordered_map>
 #include <glm/glm.hpp>
 
-
-std::ostream& operator<<(std::ostream& os, const Vertex& vertex)
-{
-    os << "position: (" << vertex.position.x<< ", "<<vertex.position.y<<", "<<vertex.position.z<<")\n";
-    
-    return os;
-}
 
 void printMesh(Mesh m) {
     for (int i = 0; i < m.points.size(); i++) {
