@@ -1,33 +1,41 @@
 #include "MetropolisHastings.h"
 
 
-MetropolisHastings::MetropolisHastings(BuildSSM* shapeModel, Eigen::VectorXf initCoefficients, BodyParameters observedParams, float proposalStddev, float likelihoodStddev, float priorStddev) {
+MetropolisHastings::MetropolisHastings(BuildSSM* shapeModel, const std::string& inputParamsPath, Eigen::VectorXf initCoefficients, float proposalStddev, float likelihoodStddev, float priorStddev) {
     ssm = shapeModel;
     shapeCoefficients = initCoefficients;
-    observedBodyParams = observedParams;
     proposalDistribution = new GaussianProposal(proposalStddev);
     this->likelihoodStddev = likelihoodStddev;
     this->priorStddev = priorStddev;
+
+    std::ifstream json_file(inputParamsPath);
+    // read as json file
+    json_file >> this->observedParamsJson;
+    json_file.close();
+
+    observedBodyParams.height = (float)observedParamsJson["height"];
+    observedBodyParams.armSpan = (float)observedParamsJson["arm_span"];
+    observedBodyParams.stomachWidth = (float)observedParamsJson["belly"];
+    observedBodyParams.thighRighWidth = (float)observedParamsJson["thigh"];
+    observedBodyParams.chestWidth = (float)observedParamsJson["chest_width"];
+    observedBodyParams.legHeight = (float)observedParamsJson["leg_length"];
+    observedBodyParams.headWidth = (float)observedParamsJson["head_width"];
+
+    observedBodyParams.armSpanRatio = (float)observedBodyParams.armSpan / (float)observedBodyParams.height;
+    observedBodyParams.stomachWidthRatio = (float)observedBodyParams.stomachWidth / (float)observedBodyParams.height;
+    observedBodyParams.thighRightWidthRatio = (float)observedBodyParams.thighRighWidth / (float)observedBodyParams.height;
+    observedBodyParams.chestWidthRatio = (float)observedBodyParams.chestWidth / (float)observedBodyParams.height;
+    observedBodyParams.legHeightRatio = (float)observedBodyParams.legHeight / (float)observedBodyParams.height;
+    observedBodyParams.headWidthRatio = (float)observedBodyParams.headWidth / (float)observedBodyParams.height;
+    observedBodyParams.neckLengthRatio = 0.03f;
+
 }
 
 MetropolisHastings::~MetropolisHastings() {
 
 }
 
-void MetropolisHastings::run(unsigned int iterations) {
-    // 1. propose on shape coefficients
-    // 2. evaluate posterior
-    //      - evaluate likelihood
-    //      - evaluate prior
-    // 3. instance from ssm with new proposed shape coefficients
-    // 4. create Model from instanced mesh
-    // 5. get new BodyParameters from the Model 
-    // 6. compute posterior of proposed shape coefficients
-    // 7. compute transition ratio
-    //      - evaluateLogTransitionProbability from GaussianProposal
-    // 8.
-
-    // -------------------------------------------------
+Model MetropolisHastings::run(unsigned int iterations) {
 
     float bestAlpha = -99999999.99;
     Eigen::VectorXf bestCoef = shapeCoefficients;
@@ -136,8 +144,8 @@ void MetropolisHastings::run(unsigned int iterations) {
     //      finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
     //      finalMesh.normals, finalMesh.textureCoords);
     Model finalModel(finalMesh, idsIndicesJson);
-    finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6.obj");
-    finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6_landmarks.json");
+    //finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6.obj");
+    //finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6_landmarks.json");
 
     BodyParameters finalBodyParameters = finalModel.computeBodyRatios();//finalModel.computeBodyParameters();
     std::cout << "finalBodyParameters: \n";
@@ -157,7 +165,7 @@ void MetropolisHastings::run(unsigned int iterations) {
     //std::cout << "finalBodyParameters.heightRatio; " << finalBodyParameters.heightRatio << "\n";
     
 
-
+    return finalModel;
 
     // std::cout << "*********** countAccepted: " << countAccepted << "\n";
     // std::cout << "*********** countRejected: " << countRejected << "\n";

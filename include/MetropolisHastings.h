@@ -15,11 +15,12 @@
 
 class MetropolisHastings {
 public:
-    MetropolisHastings(BuildSSM* shapeModel, Eigen::VectorXf initCoefficients, BodyParameters observedParams, float proposalStddev, float likelihoodStddev, float priorStddev);
+    MetropolisHastings(BuildSSM* shapeModel, const std::string& inputParamsPath, Eigen::VectorXf initCoefficients, float proposalStddev, float likelihoodStddev, float priorStddev);
     ~MetropolisHastings();
 
-    void run(unsigned int iterations);
+    Model run(unsigned int iterations);
 
+    nlohmann::json observedParamsJson;
 private:
     BuildSSM* ssm;
     Eigen::VectorXf shapeCoefficients;

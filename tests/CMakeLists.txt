@@ -7,57 +7,14 @@ find_package( OpenCV REQUIRED )
 
 find_package (Eigen3 3.3 REQUIRED)
 
-#find_package(h5cpp REQUIRED)
 find_package(HDF5 REQUIRED CXX HL)
 
-
 get_filename_component(DIR_ONE_ABOVE ../ ABSOLUTE)
-
-set(ENABLE_ASSIMP   ON CACHE BOOL "Add Open Asset Import Library (assimp) to the project" FORCE)
-
-#### added
-#find_package(OpenGL REQUIRED)
-#find_package(GLUT REQUIRED)
-#find_package(GLEW REQUIRED)
-#message(STATUS "find glew")
-####
-
-# These are the options we select for building GLFW as a library
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)        # Don't build Documentation
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)       # Don't build Tests
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)    # Don't build Examples
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)           # Don't build Installation Information
-set(GLFW_USE_HYBRID_HPG ON CACHE BOOL "" FORCE)     # Add variables to use High Performance Graphics Card if available
-# add_subdirectory(third_party/glfw)                       # Build the GLFW project to use later as a library
-add_subdirectory(lib)
-message(STATUS "ADDED lib")
-
-
-add_definitions(-DGLEW_STATIC)
-add_subdirectory(third_party/glew EXCLUDE_FROM_ALL)
-
-set(GLAD_SOURCE third_party/glad/src/gl.c)
-
-set(IMGUI_SOURCES
-        third_party/imgui/imgui.cpp
-        third_party/imgui/imgui_demo.cpp
-        third_party/imgui/imgui_draw.cpp
-        third_party/imgui/imgui_widgets.cpp
-        third_party/imgui/imgui_impl/imgui_impl_glfw.cpp
-        third_party/imgui/imgui_impl/imgui_impl_opengl3.cpp
-        )
-
-# Combine all vendor source files together into a single variable
-#set(THIRD_PARTY_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
-set(THIRD_PARTY_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 
 include_directories( 
     ${OpenCV_INCLUDE_DIRS} 
     ${DIR_ONE_ABOVE}/include/
-    #third_party/glfw/include
-    #third_party/glad/include
     third_party/glm
-    #third_party/imgui
     third_party/utils
     third_party/hdf5/1.12.2/include
     )
@@ -67,78 +24,16 @@ file(GLOB ALL_SOURCES
 )
 message(STATUS "files: ${ALL_SOURCES}")
 
-add_executable( opencv2_test opencv2_test.cpp )
-target_link_libraries( opencv2_test ${OpenCV_LIBS} )
-
-add_executable( displayImg_test displayImg_test.cpp )
-target_link_libraries( displayImg_test ${OpenCV_LIBS} )
-
-
-message(STATUS "DIR_ONE_ABOVE: ${DIR_ONE_ABOVE}")
-set(PIXEL_SRCS ${DIR_ONE_ABOVE}/src/Pixel.cpp)
-message(STATUS "PIXEL_SRCS: ${PIXEL_SRCS}")
-
-# add_executable( pixel_test pixel_test.cpp ${PIXEL_SRCS})
-# target_link_libraries( pixel_test  )
-
-
-# add_executable(glfw_test glfw_test.cpp ${THIRD_PARTY_SOURCES} )
-# target_link_libraries(glfw_test glfw)
-
-#add_subdirectory(third_party)
-#message(STATUS "ADDED assimp")
-# add_executable(assimp_test assimp_test.cpp ${THIRD_PARTY_SOURCES})
-
-message(STATUS "ASSIMP ENABLED out")
-#target_link_libraries(assimp_test glfw assimp)
-
-
-#add_executable(ui_test ui_test.cpp ${DIR_ONE_ABOVE}/src/UI.cpp ${THIRD_PARTY_SOURCES})
-#target_link_libraries(ui_test glfw)
-
-#target_include_directories(GLEW_210 PUBLIC glew-2.1.0/include)
-#link_libraries(${GLEW_LIBRARIES})
-# add_executable(drawPoint_test drawPoint_test.cpp ${THIRD_PARTY_SOURCES})
-# target_link_libraries(drawPoint_test 
-#     PRIVATE glfw
-#     PRIVATE libglew_static 
-# )
-
-# add_executable(drawTriangle_test drawTriangle_test.cpp ${THIRD_PARTY_SOURCES})
-# target_link_libraries(drawTriangle_test 
-#     PRIVATE glfw
-#     PRIVATE libglew_static 
-# )
-
-# add_executable(mesh_test mesh_test.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${DIR_ONE_ABOVE}/src/Point.cpp ${THIRD_PARTY_SOURCES})
-# target_link_libraries(mesh_test glfw Eigen3::Eigen)
-
-# add_executable(model_test model_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${DIR_ONE_ABOVE}/src/Model.cpp ${DIR_ONE_ABOVE}/src/Mesh.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-# target_link_libraries(model_test glfw assimp Eigen3::Eigen)
-
 add_executable(buildSSM_test buildSSM_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
 target_link_libraries(buildSSM_test 
     PRIVATE HDF5::HDF5 
-    #PRIVATE glfw 
     PRIVATE Eigen3::Eigen )
 
-# add_executable(strings_test strings_test.cpp)
-
-# add_executable(point_test point_test.cpp  ${DIR_ONE_ABOVE}/src/Point.cpp)
 
 # add_executable(objloader_test objloader_test.cpp ${DIR_ONE_ABOVE}/src/ObjLoader.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
 # target_link_libraries(objloader_test glfw assimp Eigen3::Eigen)
 
 # add_executable(fileWrite_test fileWrite_test.cpp)
-
-# add_executable(matrix_test matrix_test.cpp ${THIRD_PARTY_SOURCES})
-# target_link_libraries(matrix_test glfw Eigen3::Eigen)
-
-# add_executable(landmarks_test landmarks_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-# target_link_libraries(landmarks_test glfw Eigen3::Eigen)
-
-# add_executable(hdf5_test hdf5_test.cpp ${ALL_SOURCES} ${THIRD_PARTY_SOURCES})
-# target_link_libraries(hdf5_test HDF5::HDF5 glfw Eigen3::Eigen)
 
 # add_executable(hdf5_test hdf5_test.cpp)
 # target_link_libraries(hdf5_test HDF5::HDF5)
@@ -167,7 +62,6 @@ target_link_libraries(landmarksSmpl_test HDF5::HDF5 Eigen3::Eigen)
 add_executable(buildSSMSmpl_test buildSSMSmpl_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
 target_link_libraries(buildSSMSmpl_test 
     PRIVATE HDF5::HDF5 
-    #PRIVATE glfw 
     PRIVATE Eigen3::Eigen )
 
 add_executable(readPCAModelSmpl_test readPCAModelSmpl_test.cpp ${ALL_SOURCES})
@@ -176,7 +70,6 @@ target_link_libraries(readPCAModelSmpl_test HDF5::HDF5 Eigen3::Eigen)
 add_executable(buildSSMSmplx_test buildSSMSmplx_test.cpp ${DIR_ONE_ABOVE}/src/Alignment.cpp ${ALL_SOURCES} )
 target_link_libraries(buildSSMSmplx_test 
     PRIVATE HDF5::HDF5 
-    #PRIVATE glfw 
     PRIVATE Eigen3::Eigen )
 
 add_executable(readPCASmplx_test readPCASmplx_test.cpp ${ALL_SOURCES})
