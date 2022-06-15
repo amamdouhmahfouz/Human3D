@@ -11,7 +11,6 @@ void Alignment::RotationAlignment(Model &from, Model to) {
         return;
     }
 
-    // source: stackoverflow
     float angle = acos(glm::dot(toVec, fromVec) / (glm::length(toVec) * glm::length(fromVec)));
 
     glm::mat4 rotmat = glm::rotate(angle, v);
@@ -66,20 +65,17 @@ void Alignment::ICP(Model& from, Model to) {
     }
 
     for (int j = 0; j < 1; j++) {
-        std::cout << "................. iteration #" << j << " .....................\n";
+        std::cout << "[Alignment::ICP]::................. iteration #" << j << " .....................\n";
         Eigen::MatrixXf fromMat(from.mesh.points.size(), 3);
         
-
+        // initialize the eigen matrix
         for (int i = 0; i < from.mesh.points.size(); i++) {
             fromMat(i, 0) = from.mesh.points[i].position.x;
             fromMat(i, 1) = from.mesh.points[i].position.y;
             fromMat(i, 2) = from.mesh.points[i].position.z;
         }
 
-        
-
-        std::cout << "starting cov...\n";
-        // TODO: check order of multiplication from * to or to*from ??
+        // compute the covariance matrix
         Eigen::MatrixXf cov = (toMat.transpose() * fromMat) / (from.mesh.points.size()-1);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -87,16 +83,12 @@ void Alignment::ICP(Model& from, Model to) {
             }
             std::cout << "\n";
         }
-        std::cout << "ended cov\n";
-        
+ 
+        // compute the singular value decomposition of the covariance matrix
         Eigen::JacobiSVD<Eigen::MatrixXf> svd(cov, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
         Eigen::MatrixXf matU = svd.matrixU();
         Eigen::MatrixXf matV = svd.matrixV();
-        std::cout << "matU.rows(): " << matU.rows() << "\n";
-        std::cout << "matU.cols(): " << matU.cols() << "\n";
-        std::cout << "matV.rows(): " << matV.rows() << "\n";
-        std::cout << "matV.cols(): " << matV.cols() << "\n";
 
         glm::vec3 fromCenterOfMass = from.mesh.getCenterOfMass();
         glm::vec3 toCenterOfMass = to.mesh.getCenterOfMass();
@@ -110,6 +102,7 @@ void Alignment::ICP(Model& from, Model to) {
 
         glm::vec3 t = toCenterOfMass - rotMat * fromCenterOfMass;
 
+        // apply rotation on "from" Model
         for (int i = 0; i < from.mesh.points.size(); i++) {
             from.mesh.points[i].position = rotMat * from.mesh.points[i].position + t;        
         }
@@ -119,11 +112,8 @@ void Alignment::ICP(Model& from, Model to) {
             from.mesh.normals[i].position = rotMat * from.mesh.normals[i].position + t;
         }
 
-        std::cout << "distance error: " << procrustesDistance(from, to) << "\n";
-        
+        std::cout << "[Alignment::ICP]::distance error: " << procrustesDistance(from, to) << "\n";
 
-        std::cout << "fromCenterOfMass: ("<< fromCenterOfMass.x << ", "<<fromCenterOfMass.y << ", " << fromCenterOfMass.z << ")\n";
-        std::cout << "toCenterOfMass: ("<< toCenterOfMass.x << ", "<<toCenterOfMass.y << ", " << toCenterOfMass.z << ")\n";
     }
-    //exit(0);
+    
 }
