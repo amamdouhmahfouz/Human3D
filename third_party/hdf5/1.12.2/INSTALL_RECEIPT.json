@@ -1,0 +1,90 @@
+{
+  "homebrew_version": "3.4.9-17-g80e5327",
+  "used_options": [
+
+  ],
+  "unused_options": [
+
+  ],
+  "built_as_bottle": true,
+  "poured_from_bottle": true,
+  "installed_as_dependency": true,
+  "installed_on_request": true,
+  "changed_files": [
+    "bin/h5c++",
+    "bin/h5cc",
+    "bin/h5fc",
+    "share/hdf5_examples/c/run-c-ex.sh",
+    "share/hdf5_examples/c++/run-c++-ex.sh",
+    "share/hdf5_examples/fortran/run-fortran-ex.sh",
+    "share/hdf5_examples/hl/c/run-hlc-ex.sh",
+    "share/hdf5_examples/hl/c++/run-hlc++-ex.sh",
+    "share/hdf5_examples/hl/fortran/run-hlfortran-ex.sh",
+    "include/H5pubconf.h",
+    "share/hdf5/libhdf5.settings",
+    "share/hdf5_examples/README"
+  ],
+  "time": 1651638315,
+  "source_modified_time": 1650386659,
+  "compiler": "clang",
+  "aliases": [
+    "hdf5@1.12"
+  ],
+  "runtime_dependencies": [
+    {
+      "full_name": "gmp",
+      "version": "6.2.1",
+      "declared_directly": false
+    },
+    {
+      "full_name": "isl",
+      "version": "0.24",
+      "declared_directly": false
+    },
+    {
+      "full_name": "mpfr",
+      "version": "4.1.0",
+      "declared_directly": false
+    },
+    {
+      "full_name": "libmpc",
+      "version": "1.2.1",
+      "declared_directly": false
+    },
+    {
+      "full_name": "zstd",
+      "version": "1.5.2",
+      "declared_directly": false
+    },
+    {
+      "full_name": "gcc",
+      "version": "11.3.0",
+      "declared_directly": true
+    },
+    {
+      "full_name": "libaec",
+      "version": "1.0.6",
+      "declared_directly": true
+    }
+  ],
+  "source": {
+    "spec": "stable",
+    "versions": {
+      "stable": "1.12.2",
+      "head": null,
+      "version_scheme": 1
+    },
+    "path": "/usr/local/Homebrew/Library/Taps/homebrew/homebrew-core/Formula/hdf5.rb",
+    "tap_git_head": "c07e99b42bfb3d5c30a12cf4b9108193690a2b5d",
+    "tap": "homebrew/core"
+  },
+  "arch": "x86_64",
+  "built_on": {
+    "os": "Macintosh",
+    "os_version": "macOS 10.15.7",
+    "cpu_family": "penryn",
+    "xcode": "12.4",
+    "clt": "12.0.0.32.29",
+    "preferred_perl": "5.18"
+  }
+}
