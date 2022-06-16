@@ -166,11 +166,8 @@ BodyParameters Model::computeBodyParameters() {
     BodyParameters params;
 
     params.armSpan = computeArmSpan();
-    //std::cout << "****** params.armSpan: " << params.armSpan << "\n";
     params.shoulderWidth = computeShoulderWidth();
-    //std::cout << "****** params.shoulderWidth: " << params.shoulderWidth << "\n";
     params.height = computeModelHeight();
-    //std::cout << "****** params.height: " << params.height << "\n";
 
     return params;
 }
@@ -199,14 +196,6 @@ BodyParameters Model::computeBodyRatios() {
     params.headWidthRatio = params.headWidth / params.height;
     params.headIntoLengthRatio = params.headIntoLength / params.height;
     params.thighRightWidthRatio = params.thighRighWidth / params.height;
-
-    // float actualHeight = 168.0;
-    // params.heightRatio = params.height / actualHeight;
-    // params.shoulderWidthRatio = params.shoulderWidth / actualHeight;
-    // params.armSpanRatio = params.armSpan / actualHeight;
-    // params.stomachWidthRatio = params.stomachWidth / actualHeight;
-    // params.chestWidthRatio = params.chestWidth / actualHeight;
-    // params.legHeightRatio = params.legHeight / actualHeight;
 
     return params;
 

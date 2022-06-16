@@ -69,7 +69,7 @@ Model MetropolisHastings::run(unsigned int iterations) {
         std::cout << "prior: " << prior << "\n";
         std::cout << "posterior: " << posterior << "\n";
 
-        //std::cout << "proposalShapeCoeff: " << proposalShapeCoeff << "\n";
+        
         // 3. 
         Mesh proposedMesh = ssm->instanceNoNormals(proposalShapeCoeff);
         proposedMesh.scale(1000.0);
@@ -96,13 +96,11 @@ Model MetropolisHastings::run(unsigned int iterations) {
         // 7.
         float transitionProbRatio = proposalDistribution->evaluateLogTransitionProbability(shapeCoefficients, proposalShapeCoeff);
 
-        ///std::cout << "transitionProbRatio: " << transitionProbRatio << "\n";
+        
 
         float alpha = posteriorProposed - posterior - transitionProbRatio; //min(0, ...) and do not check if alpha > 0 then
         //alpha = std::min(0.0f, alpha);
-        
-        //std::cout << "alpha: " << alpha << "\n";
-        
+      
         //srand( (unsigned)time( NULL ) );
         //float u = (float) rand()/RAND_MAX;
         float u = uniform_dist(generator);
@@ -119,18 +117,13 @@ Model MetropolisHastings::run(unsigned int iterations) {
             countAccepted++;
             shapeCoefficients = proposalShapeCoeff;
 
-            //if (alpha > bestAlpha) {
-                bestAlpha = alpha;
-                bestCoef = shapeCoefficients;
-            //}
-          //  int ii;
-        //std::cin >> ii;
+            bestAlpha = alpha;
+            bestCoef = shapeCoefficients;
+
         } else {
             std::cout << "rejected\n";
             std::cout << "alpha: " << alpha << "\n";
             countRejected++;
-            //shapeCoefficients = proposalShapeCoeff;
-            //bestCoef = shapeCoefficients;
         }
 
         
@@ -167,6 +160,4 @@ Model MetropolisHastings::run(unsigned int iterations) {
 
     return finalModel;
 
-    // std::cout << "*********** countAccepted: " << countAccepted << "\n";
-    // std::cout << "*********** countRejected: " << countRejected << "\n";
 }

@@ -62,7 +62,6 @@ public:
     
     Model createMeanModel();
     void computeGPA();
-    void buildCovarianceMatrix();
 
     // subtracts the mean model out of all models
     void deMeanModels();
