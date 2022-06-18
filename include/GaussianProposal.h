@@ -4,6 +4,7 @@
 #include "ProposalDistribution.h"
 #include <random>
 #include <iostream>
+#define M_PI        3.14159265358979323846264338327950288   /* pi             */
 
 class GaussianProposal : public ProposalDistribution {
 public:

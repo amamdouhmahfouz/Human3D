@@ -23,8 +23,8 @@ Eigen::VectorXf GaussianProposal::propose(Eigen::VectorXf params) {
         proposedParams[i] = params[i] + standardDeviation *  r;
         if (proposedParams[i] > 1.0) proposedParams[i] = 1.0;
         if (proposedParams[i] < -1.0) proposedParams[i] = -1.0;
-        if (i < 10)
-            std::cout << "params[i] = " << params[i] << ",   proposedParams[i] = " <<  proposedParams[i] << "\n";
+        // if (i < 10)
+        //     std::cout << "params[i] = " << params[i] << ",   proposedParams[i] = " <<  proposedParams[i] << "\n";
     }
 
     return proposedParams;
@@ -33,7 +33,7 @@ Eigen::VectorXf GaussianProposal::propose(Eigen::VectorXf params) {
 float GaussianProposal::evaluateLogTransitionProbability(Eigen::VectorXf fromParams, Eigen::VectorXf toParams) {
     
     float sumLogValues = 0.0;
-    std::cout << "[GaussianProposal::evaluateLogTransitionProbability]::standardDeviation = " << standardDeviation << "\n";
+    //std::cout << "[GaussianProposal::evaluateLogTransitionProbability]::standardDeviation = " << standardDeviation << "\n";
     if (fromParams.size() != toParams.size()) {
         std::cerr << "[ERROR]::fromParams and toParams are not the same size!\n";
         return -1.0;

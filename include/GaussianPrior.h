@@ -2,6 +2,8 @@
 #define GAUSSIANPRIOR_H
 
 #include <Eigen/Dense>
+#include <math.h>
+#define M_PI        3.14159265358979323846264338327950288   /* pi             */
 
 class GaussianPrior {
 public:

@@ -67,21 +67,10 @@ Model MetropolisHastings::run(unsigned int iterations) {
         float likelihood = GaussianProportionEvaluator::evaluateLogProportions(likelihoodStddev, observedBodyParams, calculatedBodyParams);
         float prior = GaussianPrior::evaluateLogPrior(0.0, priorStddev, shapeCoefficients);
         float posterior = likelihood + prior;
-        std::cout << "likelihood: " << likelihood << "\n";
-        std::cout << "prior: " << prior << "\n";
-        std::cout << "posterior: " << posterior << "\n";
 
-        
         // 3. 
         Mesh proposedMesh = ssm->instanceNoNormals(proposalShapeCoeff);
         proposedMesh.scale(1000.0);
-
-        if (i == 0) {
-            std::cout << "proposalShapeCoeff: " << proposalShapeCoeff << "\n";
-            ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/proposedMesh.obj",
-                proposedMesh.points, proposedMesh.pointIds, proposedMesh.triangleCells,
-                proposedMesh.normals, proposedMesh.textureCoords);
-        }
 
         // 4.
         Model proposedModel(proposedMesh, idsIndicesJson);
@@ -92,13 +81,9 @@ Model MetropolisHastings::run(unsigned int iterations) {
         float likelihoodProposed = GaussianProportionEvaluator::evaluateLogProportions(likelihoodStddev, observedBodyParams, proposedBodyParameters);
         float priorProposed = GaussianPrior::evaluateLogPrior(0.0, priorStddev, proposalShapeCoeff);
         float posteriorProposed = likelihoodProposed + priorProposed;
-        std::cout << "likelihoodProposed: " << likelihoodProposed << "\n";
-        std::cout << "priorProposed: " << priorProposed << "\n";
-        std::cout << "posteriorProposed: " << posteriorProposed << "\n";
+
         // 7.
         float transitionProbRatio = proposalDistribution->evaluateLogTransitionProbability(shapeCoefficients, proposalShapeCoeff);
-
-        
 
         float alpha = posteriorProposed - posterior - transitionProbRatio; //min(0, ...) and do not check if alpha > 0 then
         //alpha = std::min(0.0f, alpha);
@@ -109,10 +94,6 @@ Model MetropolisHastings::run(unsigned int iterations) {
         
 
         if (alpha > 0 || exp(alpha) > u) {
-        //if (alpha > log(u)) {
-            // accept
-            std::cout << "accepted\n";
-            std::cout << "alpha: " << alpha << "\n";
             countAccepted++;
             shapeCoefficients = proposalShapeCoeff;
 
@@ -121,8 +102,6 @@ Model MetropolisHastings::run(unsigned int iterations) {
             indices.push_back(i);
             lastIndex = i;
         } else {
-            std::cout << "rejected\n";
-            std::cout << "alpha: " << alpha << "\n";
             countRejected++;
         }
 
@@ -137,12 +116,7 @@ Model MetropolisHastings::run(unsigned int iterations) {
     std::cout << "*********** countRejected: " << countRejected << "\n";
     Mesh finalMesh = ssm->instance(bestCoef);
     finalMesh.scale(1000.0);
-    // ObjLoader::saveObj("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh3.obj",
-    //      finalMesh.points, finalMesh.pointIds, finalMesh.triangleCells,
-    //      finalMesh.normals, finalMesh.textureCoords);
     Model finalModel(finalMesh, idsIndicesJson);
-    //finalModel.saveMesh("/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6.obj");
-    //finalModel.saveLandmarks(idsIndicesJson, "/Users/abdelrahmanabdelghany/Documents/college/semester10/GP/Human3D/tests/finalMesh6_landmarks.json");
 
     BodyParameters finalBodyParameters = finalModel.computeBodyRatios();//finalModel.computeBodyParameters();
     std::cout << "finalBodyParameters: \n";
@@ -161,9 +135,9 @@ Model MetropolisHastings::run(unsigned int iterations) {
    //std::cout << "finalBodyParameters.headIntoLengthRatio; " << finalBodyParameters.headIntoLengthRatio << "\n";
     //std::cout << "finalBodyParameters.heightRatio; " << finalBodyParameters.heightRatio << "\n";
     
-    std::cout << "indices accepted: ";
-    for (int i = 0; i < indices.size(); i++) std::cout << indices[i] << " ";
-    std::cout << "\n";
+    // std::cout << "indices accepted: ";
+    // for (int i = 0; i < indices.size(); i++) std::cout << indices[i] << " ";
+    // std::cout << "\n";
 
     return finalModel;
 

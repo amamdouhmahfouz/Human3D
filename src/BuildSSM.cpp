@@ -21,7 +21,7 @@ BuildSSM::BuildSSM(const std::string& dir_path, const std::string& reference_obj
 
 void BuildSSM::add_files_to_vec(const std::string& dir, const std::string& delim, std::vector<std::string>& v) {
     for (const auto& file: std::filesystem::directory_iterator(dir)) {
-        std::string filename = file.path();
+        std::string filename = file.path().u8string();
         std::size_t pos = filename.find(delim);
         if (pos >= 0 && pos < filename.size()) {
             v.push_back(filename);

@@ -7,9 +7,8 @@ make sure to have [Eigen 3.3](https://eigen.tuxfamily.org/index.php?title=Main_P
 ```{sh}
 git clone https://github.com/amamdouhmahfouz/Human3D.git
 cd Human3D
-mkdir build && cd build
-cmake ..
-make
+cmake -S. -Bbuild
+cmake --build build
 ```
 
 ### Download Model
@@ -22,12 +21,12 @@ male model + mean mesh: https://drive.google.com/file/d/1qbm_t9WqNWRJKyZP17T1H53
 
 Fit shape model on input json with proportions:
 ```{sh}
-./fitting ../models/pcaModel_male.csv ../models/meanMesh.csv ../data/referenceObj.obj ../data/ids_index_v2.json ../data/inputParams.json ../output/finalMesh7.obj ../output/finalLms7.json
+./build/fitting models/pcaModel_male.csv models/meanMesh.csv data/referenceObj.obj data/ids_index_v2.json data/inputParams.json output/finalMesh7.obj output/finalLms7.json
 ```
 
 Build your own shape model from a directory:
 ```{sh}
-./buildShapeModel path_to_meshes_dir path_to_meanMesh ../data/referenceObj.obj output_path_for_h5_model 
+./build/buildShapeModel path_to_meshes_dir path_to_meanMesh data/referenceObj.obj output_path_for_csv_model output_path_for_csv_meanMesh
 ```
 
 ### Datasets

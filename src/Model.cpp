@@ -217,7 +217,8 @@ void Model::saveLandmarks(nlohmann::json idsIndicesJson, const std::string& outp
         k++;
     }
     std::ofstream writeJson(outputPath);
-    writeJson << std::setw(4) << newLmsJson << std::endl;
+    //writeJson << std::setw(4) << newLmsJson << std::endl;
+    writeJson << newLmsJson << std::endl;
     std::cout << "[Model::saveLandmarks]::saved landmarks from model successfully\n";
 }
 
