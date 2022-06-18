@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     Eigen::VectorXf coefficients(7);
     coefficients.setZero();
 
-    float sdevProposal = 0.066f;
+    float sdevProposal = 0.05f;
     float sdevLikelihood = 0.01f;
     float sdevPrior = 1.0f;
     int numIterations = 7000;

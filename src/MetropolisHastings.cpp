@@ -36,6 +36,8 @@ MetropolisHastings::~MetropolisHastings() {
 }
 
 Model MetropolisHastings::run(unsigned int iterations) {
+    std::vector<int> indices;
+    int lastIndex = 0;
 
     float bestAlpha = -99999999.99;
     Eigen::VectorXf bestCoef = shapeCoefficients;
@@ -51,7 +53,7 @@ Model MetropolisHastings::run(unsigned int iterations) {
     //srand( (unsigned)time( NULL ) );
 
     for (int i = 0; i < iterations; i++) {
-        std::cout << "......... iteration #: " << i << " / "<< iterations<<" ............\n";
+        std::cout << "......... iteration #: " << i+1 << " / "<< iterations<<" ............\n";
         // 1.
         Eigen::VectorXf proposalShapeCoeff = proposalDistribution->propose(shapeCoefficients);
         // 2.
@@ -109,6 +111,7 @@ Model MetropolisHastings::run(unsigned int iterations) {
         std::cout << "log(u): " << log(u) << "\n";
         //std::cout << "exp(alpha): " << exp(alpha) << "\n";
         std::cout << "transitionProbRatio: " << transitionProbRatio << "\n";
+        
         if (alpha > 0 || exp(alpha) > u) {
         //if (alpha > log(u)) {
             // accept
@@ -119,11 +122,16 @@ Model MetropolisHastings::run(unsigned int iterations) {
 
             bestAlpha = alpha;
             bestCoef = shapeCoefficients;
-
+            indices.push_back(i);
+            lastIndex = i;
         } else {
             std::cout << "rejected\n";
             std::cout << "alpha: " << alpha << "\n";
             countRejected++;
+        }
+
+        if (i - lastIndex > 1690) {
+            break;
         }
 
         
@@ -157,6 +165,9 @@ Model MetropolisHastings::run(unsigned int iterations) {
    //std::cout << "finalBodyParameters.headIntoLengthRatio; " << finalBodyParameters.headIntoLengthRatio << "\n";
     //std::cout << "finalBodyParameters.heightRatio; " << finalBodyParameters.heightRatio << "\n";
     
+    std::cout << "indices accepted: ";
+    for (int i = 0; i < indices.size(); i++) std::cout << indices[i] << " ";
+    std::cout << "\n";
 
     return finalModel;
 
