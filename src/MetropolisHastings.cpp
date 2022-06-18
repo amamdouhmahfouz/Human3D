@@ -107,11 +107,7 @@ Model MetropolisHastings::run(unsigned int iterations) {
         //float u = (float) rand()/RAND_MAX;
         float u = uniform_dist(generator);
         
-        std::cout << "u: " << u << "\n";
-        std::cout << "log(u): " << log(u) << "\n";
-        //std::cout << "exp(alpha): " << exp(alpha) << "\n";
-        std::cout << "transitionProbRatio: " << transitionProbRatio << "\n";
-        
+
         if (alpha > 0 || exp(alpha) > u) {
         //if (alpha > log(u)) {
             // accept
