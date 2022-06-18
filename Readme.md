@@ -2,7 +2,7 @@
 
 ### Installation
 
-make sure to have [Eigen 3.3](https://eigen.tuxfamily.org/index.php?title=Main_Page) and [HDF5](https://www.hdfgroup.org/downloads/hdf5/) installed on your system (see instructions in each link)
+make sure to have [Eigen 3.3](https://eigen.tuxfamily.org/index.php?title=Main_Page) installed on your system 
 
 ```{sh}
 git clone <repo link.git>
@@ -22,7 +22,7 @@ male model + mean mesh: https://drive.google.com/file/d/1qbm_t9WqNWRJKyZP17T1H53
 
 Fit shape model on input json with proportions:
 ```{sh}
-./fitting ../models/pcaModel_male.csv ../models/meanMesh.csv ../data/referenceObj.obj ../data/ids_index_v2.json ../data/inputParamsjson ../output/finalMesh7.obj ../output/finalLms7.json
+./fitting ../models/pcaModel_male.csv ../models/meanMesh.csv ../data/referenceObj.obj ../data/ids_index_v2.json ../data/inputParams.json ../output/finalMesh7.obj ../output/finalLms7.json
 ```
 
 Build your own shape model from a directory:
