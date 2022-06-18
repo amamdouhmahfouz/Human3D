@@ -5,7 +5,7 @@
 make sure to have [Eigen 3.3](https://eigen.tuxfamily.org/index.php?title=Main_Page) installed on your system 
 
 ```{sh}
-git clone <repo link.git>
+git clone https://github.com/amamdouhmahfouz/Human3D.git
 cd Human3D
 mkdir build && cd build
 cmake ..
