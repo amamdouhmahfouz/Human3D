@@ -7,7 +7,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 find_package (Eigen3 3.3 REQUIRED)
-find_package(HDF5 REQUIRED CXX HL)
 
 include_directories( 
     include/
