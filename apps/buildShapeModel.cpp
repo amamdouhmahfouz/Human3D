@@ -5,11 +5,12 @@
 #include <glm/gtx/transform.hpp>
 
 /**
- * @brief create pca shape model from directory and reference mesh and save the model in h5 format
+ * @brief create pca shape model from directory and reference mesh and save the model and mean mesh in csv format
  * 
  * @param argv[1] - meshes directory path to build the model on 
  * @param argv[2] - reference mesh obj file path
- * @param argv[3] - output pca model h5 file path to be saved at
+ * @param argv[3] - output pca model csv file path to be saved at
+ * @param argv[4] - output mean mesh csv file to be saved at
  * 
  */
 int main(int argc, char *argv[]) {
@@ -37,7 +38,8 @@ int main(int argc, char *argv[]) {
     ssm.createPCA();
     std::cout << "[buildShapeModel]::created pca shape model\n";
 
-    ssm.savePCAModel(std::string(argv[3]));
+    //ssm.savePCAModel(std::string(argv[3]));
+    ssm.savePCAModel_CSV(std::string(argv[3]), std::string(argv[4]));
     std::cout << "[buildShapeModel]::saved pca shape model\n";
 
     return 0;

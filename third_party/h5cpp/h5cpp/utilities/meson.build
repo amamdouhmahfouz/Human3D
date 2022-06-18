@@ -1,1 +1,0 @@
-install_headers('array_adapter.hpp', subdir: join_paths('h5cpp', 'utilities'))

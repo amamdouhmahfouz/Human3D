@@ -13,7 +13,6 @@ include_directories(
     include/
     third_party/glm
     third_party/utils
-    third_party/hdf5/1.12.2/include
     )
 
 file(GLOB ALL_SOURCES
@@ -22,7 +21,7 @@ file(GLOB ALL_SOURCES
 message(STATUS "files: ${ALL_SOURCES}")
 
 add_executable(fitting apps/fitting.cpp  ${ALL_SOURCES} )
-target_link_libraries(fitting HDF5::HDF5 Eigen3::Eigen)
+target_link_libraries(fitting  Eigen3::Eigen)
 
 add_executable(buildShapeModel apps/buildShapeModel.cpp  ${ALL_SOURCES} )
-target_link_libraries(buildShapeModel HDF5::HDF5 Eigen3::Eigen)
+target_link_libraries(buildShapeModel  Eigen3::Eigen)

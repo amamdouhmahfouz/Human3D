@@ -13,8 +13,9 @@
 #include "PCA.h"
 #include <json/json.hpp>
 #include <fstream>
-#include "H5Cpp.h"
-using namespace H5;
+#include <sstream>
+// #include "H5Cpp.h"
+// using namespace H5;
 
 
 class BuildSSM {
@@ -39,6 +40,7 @@ private:
     void add_files_to_vec(const std::string& dir, const std::string& delim, std::vector<std::string>& v);
     std::string getCorrespondingMetadataFile(const std::string& mesh_file_path);
     std::string getNameFromFile(const std::string& filepath, const std::string& file_extension);
+    std::string floatToStr (const float & t);
 public:
     std::vector<Model> models;
     PCA* pcaModel;
@@ -84,6 +86,9 @@ public:
 
     Mesh sampleSSMSmpl(Eigen::VectorXf coefficients);
     void loadPCAModelSmpl(const std::string& model_path, const std::string& reference_obj_path);
+    
+    void loadPCAModel_CSV(const std::string& model_path, const std::string& mean_path, const std::string& reference_obj_path);
+    void savePCAModel_CSV(const std::string& model_path, const std::string& mean_path);
 };
 
 
