@@ -20,7 +20,6 @@ file(GLOB ALL_SOURCES
     src/*.cpp
 )
 message(STATUS "files: ${ALL_SOURCES}")
-message(STATUS "eigen: ${EIGEN3_INCLUDE_DIR}")
 
 add_executable(fitting apps/fitting.cpp  ${ALL_SOURCES} )
 target_link_libraries(fitting HDF5::HDF5 Eigen3::Eigen)
